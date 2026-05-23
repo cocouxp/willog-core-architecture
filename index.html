@@ -1636,10 +1636,10 @@ p{line-height:1.75;color:#334155;margin-bottom:8px;font-size:13px}
           <div class="t0">[그룹] 2026-Q2 수도권 의약품 배송 (제약사 A 발주 묶음)</div>
           <div class="t1">└── [그룹] 5월 4주차 서울 배송</div>
           <div class="t2">└── [트래킹] 운송장 #KDJ-001 (이동형 운송)</div>
-          <div class="t3">├── 측정대상: 박스 BOX-001 [비실시간 기기] ← GW 중계</div>
-          <div class="t3">│&nbsp;&nbsp;&nbsp;&nbsp;── 프로브 온도 (화물 내부)</div>
-          <div class="t3">│&nbsp;&nbsp;&nbsp;&nbsp;── 환경 온도</div>
-          <div class="t3">│&nbsp;&nbsp;&nbsp;&nbsp;── 습도</div>
+          <div class="t3">├── 측정대상: 박스 BOX-001 [비실시간 기기 · 프로브 모델] ← GW 중계</div>
+          <div class="t3">│&nbsp;&nbsp;&nbsp;&nbsp;├── 프로브온도 (박스 내부 화물 실측, 2~8°C 관리)</div>
+          <div class="t3">│&nbsp;&nbsp;&nbsp;&nbsp;├── 온도 (기기 주변 환경 온도)</div>
+          <div class="t3">│&nbsp;&nbsp;&nbsp;&nbsp;└── 습도 (기기 주변 환경 습도)</div>
           <div class="t3">└── 세그먼트</div>
           <div class="t4">├── Seg 1: 수원창고 출발 → 강남병원 (45분)</div>
           <div class="t4">├── Seg 2: 강남병원 → 마포약국 (30분)</div>
@@ -1652,16 +1652,16 @@ p{line-height:1.75;color:#334155;margin-bottom:8px;font-size:13px}
         <div class="sc-sect-label">측정 파라미터</div>
         <div class="sc-params">
           <div class="sc-param">
-            <div class="sc-param-k">프로브 온도</div>
-            <div class="sc-param-v">화물 내부 실측<br><span style="color:#475569">정상: 2~8°C</span></div>
+            <div class="sc-param-k">프로브온도</div>
+            <div class="sc-param-v">박스 내부 화물 실측<br><span style="color:#475569">관리 범위: 2~8°C · 핵심 채널</span></div>
           </div>
           <div class="sc-param">
-            <div class="sc-param-k">환경 온도</div>
-            <div class="sc-param-v">박스 외부 환경<br><span style="color:#475569">참조 측정값</span></div>
+            <div class="sc-param-k">온도</div>
+            <div class="sc-param-v">기기 주변 환경 온도<br><span style="color:#475569">격차 분석 · 이상 감지</span></div>
           </div>
           <div class="sc-param">
             <div class="sc-param-k">습도</div>
-            <div class="sc-param-v">상대 습도<br><span style="color:#475569">정상: 40~70% RH</span></div>
+            <div class="sc-param-v">기기 주변 환경 습도<br><span style="color:#475569">결로 리스크 감지</span></div>
           </div>
         </div>
       </div>
@@ -1680,14 +1680,14 @@ p{line-height:1.75;color:#334155;margin-bottom:8px;font-size:13px}
           </thead>
           <tbody>
             <tr>
-              <td>온도 — 주의</td>
-              <td>프로브 온도 2°C 미만 또는 8°C 초과, ±0.5°C 이내</td>
+              <td>프로브온도 — 주의</td>
+              <td>프로브온도 2°C 미만 또는 8°C 초과, ±0.5°C 이내</td>
               <td><span style="background:#F1F5F9;color:#334155;padding:2px 7px;border-radius:4px;font-size:11px;font-weight:700">주의</span></td>
               <td>담당자 앱 푸시</td>
             </tr>
             <tr>
-              <td>온도 — 위험</td>
-              <td>프로브 온도 ±0.5°C 초과 이탈 지속 (5분 이상)</td>
+              <td>프로브온도 — 위험</td>
+              <td>프로브온도 ±0.5°C 초과 이탈 지속 (5분 이상)</td>
               <td><span style="background:#FEE2E2;color:#991B1B;padding:2px 7px;border-radius:4px;font-size:11px;font-weight:700">위험</span></td>
               <td>SMS + 이메일 즉시 발송</td>
             </tr>
@@ -1741,11 +1741,11 @@ p{line-height:1.75;color:#334155;margin-bottom:8px;font-size:13px}
     <div class="sc-head" style="background:linear-gradient(135deg,#0E7490 0%,#164E63 100%)">
       
       <div class="sc-head-info">
-        <div class="sc-head-title">시나리오 2 — 바이오테크 A — 프로브 3종 측정</div>
-        <div class="sc-head-sub">프로브 온도(침투형) + 환경 온도 + 습도 = 3종 동시 측정. 화물 내부와 외부의 온도 격차 실시간 분석.</div>
+        <div class="sc-head-title">시나리오 2 — 바이오테크 A — 프로브 모델 측정</div>
+        <div class="sc-head-sub">프로브온도(박스 내부 실측) + 온도(기기 주변) + 습도(기기 주변) = 프로브 모델 3채널 동시 측정. 화물 내부와 외부 환경 온도 격차 실시간 분석.</div>
         <div class="sc-tags">
-          <span class="sc-tag">프로브 온도</span>
-          <span class="sc-tag">3종 측정</span>
+          <span class="sc-tag">프로브 모델</span>
+          <span class="sc-tag">프로브온도·온도·습도</span>
           <span class="sc-tag">공간형 트래킹</span>
           <span class="sc-tag">실시간 기기 (프로브형)</span>
           <span class="sc-tag">상시 모니터링</span>
@@ -1760,10 +1760,10 @@ p{line-height:1.75;color:#334155;margin-bottom:8px;font-size:13px}
         <div class="sc-tree">
           <div class="t0">[그룹] 바이오테크 A 프로브 모니터링 — 2026년 Q2</div>
           <div class="t1">└── [트래킹] 물류센터 냉장구역 A (고정형 공간)</div>
-          <div class="t2">├── 측정대상: 구역 ZONE-A01 [실시간 기기 (프로브형)]</div>
-          <div class="t3">── 프로브 온도 채널 1 (화물 내부 실측)</div>
-          <div class="t3">── 환경 온도 (구역 공기 온도)</div>
-          <div class="t3">── 습도</div>
+          <div class="t2">├── 측정대상: 구역 ZONE-A01 [실시간 기기 · 프로브 모델]</div>
+          <div class="t3">├── 프로브온도 (박스 내부 화물 실측, 관리 범위 설정)</div>
+          <div class="t3">├── 온도 (기기 주변 환경 온도, 격차 분석용)</div>
+          <div class="t3">└── 습도 (기기 주변 환경 습도)</div>
           <div class="t2">└── 세그먼트 없음 (상시 모니터링)</div>
         </div>
       </div>
@@ -1773,16 +1773,16 @@ p{line-height:1.75;color:#334155;margin-bottom:8px;font-size:13px}
         <div class="sc-sect-label">측정 파라미터</div>
         <div class="sc-params">
           <div class="sc-param">
-            <div class="sc-param-k">프로브 온도 (침투형)</div>
-            <div class="sc-param-v">화물 내부 실측<br><span style="color:#64748B">침투형 프로브 연결</span></div>
+            <div class="sc-param-k">프로브온도</div>
+            <div class="sc-param-v">박스 내부 화물 실측<br><span style="color:#64748B">핵심 관리 채널</span></div>
           </div>
           <div class="sc-param">
-            <div class="sc-param-k">환경 온도</div>
-            <div class="sc-param-v">공간 내 공기 온도<br><span style="color:#475569">외부 환경 기준</span></div>
+            <div class="sc-param-k">온도</div>
+            <div class="sc-param-v">기기 주변 환경 온도<br><span style="color:#475569">내외부 격차 분석</span></div>
           </div>
           <div class="sc-param">
             <div class="sc-param-k">습도</div>
-            <div class="sc-param-v">상대 습도 (%RH)<br><span style="color:#475569">결로 방지 관리</span></div>
+            <div class="sc-param-v">기기 주변 환경 습도<br><span style="color:#475569">결로 감지</span></div>
           </div>
         </div>
       </div>
@@ -1801,14 +1801,14 @@ p{line-height:1.75;color:#334155;margin-bottom:8px;font-size:13px}
           </thead>
           <tbody>
             <tr>
-              <td>프로브-환경 격차 이상</td>
-              <td>프로브 온도 - 환경 온도 격차 > 3°C 이상 지속</td>
+              <td>온도 격차 이상</td>
+              <td>프로브온도 - 온도 격차 > 3°C 이상 지속</td>
               <td><span style="background:#F1F5F9;color:#334155;padding:2px 7px;border-radius:4px;font-size:11px;font-weight:700">주의</span></td>
               <td>냉각 시스템 점검</td>
             </tr>
             <tr>
-              <td>화물 내부 온도 이탈</td>
-              <td>프로브 온도 설정 범위 벗어남</td>
+              <td>프로브온도 이탈</td>
+              <td>프로브온도 설정 범위 벗어남</td>
               <td><span style="background:#FEE2E2;color:#991B1B;padding:2px 7px;border-radius:4px;font-size:11px;font-weight:700">위험</span></td>
               <td>즉시 SMS + 관리자 호출</td>
             </tr>
@@ -1823,7 +1823,7 @@ p{line-height:1.75;color:#334155;margin-bottom:8px;font-size:13px}
       </div>
 
       <div class="callout callout-blue" style="margin-top:0">
-        <strong>바이오테크 A 특징:</strong> 프로브 온도와 환경 온도를 동시 측정하여 화물 내부와 공간 간의 <strong>온도 격차 이상 징후</strong>를 조기 감지합니다. 단순 임계값 알림을 넘어 격차 패턴 분석이 핵심입니다.
+        <strong>바이오테크 A 특징:</strong> 프로브 모델 기기로 <strong>프로브온도</strong>(박스 내부 실측)와 <strong>온도</strong>(기기 주변)를 동시 측정하여 화물 내부와 외부 환경의 <strong>온도 격차 이상 징후</strong>를 조기 감지합니다. 단순 임계값 알림을 넘어 격차 패턴 분석이 핵심입니다.
       </div>
 
     </div>
@@ -1965,11 +1965,12 @@ p{line-height:1.75;color:#334155;margin-bottom:8px;font-size:13px}
       
       <div class="sc-head-info">
         <div class="sc-head-title">시나리오 4 — 창고 공간 모니터링 — 대형 물류센터 A동</div>
-        <div class="sc-head-sub">이동 없음. 냉동구역 및 입출고 게이트 상시 고정 모니터링. 세그먼트 없이 구역별 독립 트래킹.</div>
+        <div class="sc-head-sub">이동 없음. 냉동구역 및 입출고 게이트 상시 고정 모니터링. 세그먼트 없이 구역별 독립 트래킹. 실시간 기기(창고형) 또는 비실시간 기기+GW 조합 모두 적용 가능.</div>
         <div class="sc-tags">
           <span class="sc-tag">창고 모니터링</span>
           <span class="sc-tag">공간형 트래킹</span>
           <span class="sc-tag">실시간 기기 (창고형)</span>
+          <span class="sc-tag">비실시간 기기 (GW)</span>
           <span class="sc-tag">상시 모니터링</span>
           <span class="sc-tag">다중 구역</span>
         </div>
@@ -1988,8 +1989,9 @@ p{line-height:1.75;color:#334155;margin-bottom:8px;font-size:13px}
           <div class="t3">── 습도</div>
           <div class="t3">── 문열림 감지</div>
           <div class="t1">├── [트래킹] 냉동구역 2호 (고정형 공간)</div>
-          <div class="t2">│&nbsp;&nbsp;&nbsp;&nbsp;└── 측정대상: 구역 ZONE-F02 [실시간 기기 (창고형)]</div>
+          <div class="t2">│&nbsp;&nbsp;&nbsp;&nbsp;└── 측정대상: 구역 ZONE-F02 [비실시간 기기 ← GW 중계]</div>
           <div class="t3">── 온도, 습도, 문열림</div>
+          <div class="t3">└── (GW가 데이터 수집 후 서버 전송 — 비실시간)</div>
           <div class="t1">└── [트래킹] 입출고 게이트 (고정형 공간)</div>
           <div class="t2">└── 측정대상: 위치 SPOT-GATE [실시간 기기 (창고형)]</div>
           <div class="t3">── 온도, 문열림 감지</div>
@@ -2012,6 +2014,15 @@ p{line-height:1.75;color:#334155;margin-bottom:8px;font-size:13px}
             <div class="sc-param-k">문열림</div>
             <div class="sc-param-v">도어 개방 감지<br><span style="color:#475569">비업무 시간대 알림</span></div>
           </div>
+        </div>
+      </div>
+
+      <!-- 기기 유형 선택 안내 -->
+      <div class="sc-sect">
+        <div class="sc-sect-label">기기 유형 선택</div>
+        <div style="background:#F0FDF4;border:1px solid #BBF7D0;border-radius:8px;padding:14px 16px;font-size:12.5px;color:#166534;line-height:1.8">
+          <strong>실시간 기기 (창고형)</strong> — 전원 공급 가능한 구역에 고정 설치. 데이터 즉시 전송.<br>
+          <strong>비실시간 기기 + GW 조합</strong> — 전원 인프라가 없는 구역이나 배터리 운용이 필요한 경우. GW(게이트웨이)가 근거리 수집 후 서버 전송. 두 방식은 <strong>동일 그룹 내에서 혼용 가능</strong>.
         </div>
       </div>
 
@@ -2077,6 +2088,12 @@ p{line-height:1.75;color:#334155;margin-bottom:8px;font-size:13px}
             <div class="sc-col-item">· 공간형 트래킹 — 이동 없음</div>
             <div class="sc-col-item">· 상시 연속 모니터링</div>
             <div class="sc-col-item">· 설치 후 종료 없이 계속 운용</div>
+          </div>
+          <div class="sc-col">
+            <div class="sc-col-title">기기 유형 혼용</div>
+            <div class="sc-col-item">· 실시간 기기와 비실시간 기기(GW) 동일 그룹 내 혼용</div>
+            <div class="sc-col-item">· 구역 인프라 조건에 따라 유연 선택</div>
+            <div class="sc-col-item">· 알림 케이스는 기기 유형 무관 동일 적용</div>
           </div>
         </div>
       </div>
