@@ -1,0 +1,1981 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>통합 플랫폼 핵심 구조도 — v1.0</title>
+<style>
+:root {
+  --navy:#1B2C5E; --blue:#2563EB; --blue-l:#DBEAFE;
+  --green:#059669; --green-l:#D1FAE5;
+  --purple:#7C3AED; --purple-l:#EDE9FE;
+  --cyan:#0891B2; --cyan-l:#CFFAFE;
+  --amber:#D97706; --amber-l:#FEF3C7;
+  --red:#DC2626; --red-l:#FEE2E2;
+  --orange:#EA580C; --orange-l:#FFEDD5;
+  --violet:#6D28D9; --violet-l:#EDE9FE;
+  --pink:#DB2777; --pink-l:#FCE7F3;
+  --gray:#64748B; --gray-l:#F1F5F9; --gray-m:#E2E8F0;
+  --sidebar-w:232px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Apple SD Gothic Neo',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:13px;color:#0F172A;background:#F8FAFF;display:flex}
+
+/* ── Tab Switcher ── */
+.tab-bar{display:flex;gap:4px;margin-bottom:24px;background:#fff;border:1.5px solid var(--gray-m);border-radius:10px;padding:5px;width:fit-content}
+.tab-btn{padding:7px 22px;border-radius:7px;font-size:13px;font-weight:700;cursor:pointer;border:none;background:transparent;color:#64748B;transition:all .15s;display:flex;align-items:center;gap:7px}
+.tab-btn.active{background:var(--navy);color:#fff}
+.tab-btn:hover:not(.active){background:var(--gray-l)}
+
+/* ── Dev View ── */
+#view-dev{display:none}
+#view-plan{display:block}
+
+/* ── Schema Cards ── */
+.schema-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:16px;margin:16px 0}
+.schema-card{background:#fff;border-radius:10px;border:1.5px solid var(--gray-m);overflow:hidden}
+.schema-card-head{padding:10px 16px;display:flex;align-items:center;gap:8px}
+.schema-card-head .tbl-name{font-size:13px;font-weight:800;color:#0F172A}
+.schema-card-head .tbl-desc{font-size:11px;color:#64748B}
+.schema-card-head .tbl-badge{margin-left:auto;font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px;white-space:nowrap}
+.schema-field-table{width:100%;font-size:11.5px;border-collapse:collapse}
+.schema-field-table th{background:#F8FAFF;color:#64748B;font-weight:700;font-size:10.5px;padding:5px 10px;text-align:left;text-transform:uppercase;letter-spacing:.05em;border-top:1px solid var(--gray-m)}
+.schema-field-table td{padding:5px 10px;border-top:1px solid #F1F5F9;vertical-align:top;line-height:1.5}
+.schema-field-table tr:hover td{background:#FAFBFF}
+.f-pk{color:#7C3AED;font-weight:700;font-size:10px}
+.f-fk{color:#1D4ED8;font-weight:700;font-size:10px}
+.f-type{color:#0891B2;font-family:monospace;font-size:11px}
+.f-null{color:#94A3B8;font-size:10px}
+.f-nn{color:#DC2626;font-size:10px;font-weight:700}
+.f-note{color:#64748B;font-size:10.5px}
+
+/* ── ERD Arrow Diagram ── */
+.erd-wrap{background:#F8FAFF;border-radius:12px;border:1.5px solid var(--gray-m);padding:24px;margin:16px 0;overflow-x:auto}
+.erd-row{display:flex;align-items:center;gap:8px;flex-wrap:nowrap;margin-bottom:6px}
+.erd-box{border-radius:8px;padding:8px 14px;font-size:12px;font-weight:800;white-space:nowrap;text-align:center}
+.erd-rel{font-size:10.5px;color:#64748B;font-weight:700;text-align:center;white-space:nowrap;display:flex;flex-direction:column;align-items:center;gap:2px}
+.erd-line{height:2px;width:36px;background:#CBD5E1}
+
+/* ── Enum Table ── */
+.enum-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;margin:12px 0}
+.enum-card{background:#fff;border-radius:10px;border:1.5px solid var(--gray-m);overflow:hidden}
+.enum-head{padding:9px 14px;font-size:12px;font-weight:800;display:flex;align-items:center;gap:8px}
+.enum-item{display:flex;align-items:flex-start;gap:8px;padding:6px 14px;border-top:1px solid #F1F5F9;font-size:11.5px}
+.enum-val{font-family:monospace;font-weight:700;font-size:11px;min-width:120px;padding-top:1px}
+.enum-desc{color:#64748B;line-height:1.5}
+
+/* ── API Flow ── */
+.api-flow-card{background:#fff;border-radius:10px;border:1.5px solid var(--gray-m);overflow:hidden;margin-bottom:16px}
+.api-flow-head{padding:12px 18px;display:flex;align-items:center;gap:10px}
+.api-step{display:flex;gap:12px;padding:10px 18px;border-top:1px solid #F1F5F9;align-items:flex-start}
+.api-step-num{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;flex-shrink:0;margin-top:1px}
+.api-step-body{flex:1}
+.api-step-title{font-size:12.5px;font-weight:700;color:#0F172A;margin-bottom:3px}
+.api-step-detail{font-size:11.5px;color:#64748B;line-height:1.6;font-family:monospace}
+.api-method{font-size:10px;font-weight:800;padding:2px 7px;border-radius:4px;margin-right:6px}
+.method-post{background:#DCFCE7;color:#166534}
+.method-get{background:#DBEAFE;color:#1E40AF}
+.method-patch{background:#FEF3C7;color:#92400E}
+
+/* ── Sidebar ── */
+#sidebar{width:var(--sidebar-w);min-height:100vh;background:var(--navy);position:fixed;top:0;left:0;overflow-y:auto;z-index:100;padding-bottom:40px}
+#sidebar .logo{padding:18px 16px 14px;border-bottom:1px solid rgba(255,255,255,.1)}
+#sidebar .logo .brand{font-size:13px;font-weight:800;color:#60A5FA;letter-spacing:.04em}
+#sidebar .logo .doc-t{font-size:11px;color:rgba(255,255,255,.45);margin-top:3px;line-height:1.5}
+#sidebar nav{padding:8px 0}
+#sidebar nav .grp{font-size:9.5px;font-weight:700;color:rgba(255,255,255,.3);letter-spacing:.1em;text-transform:uppercase;padding:12px 16px 3px}
+#sidebar nav a{display:flex;align-items:center;gap:8px;padding:6px 16px;font-size:12px;color:rgba(255,255,255,.6);text-decoration:none;transition:all .15s;border-left:3px solid transparent;line-height:1.4}
+#sidebar nav a:hover,#sidebar nav a.active{color:#fff;background:rgba(255,255,255,.07);border-left-color:#60A5FA}
+#sidebar nav a .dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+
+/* ── Main ── */
+#main{margin-left:var(--sidebar-w);padding:28px 36px 80px;max-width:1120px;width:100%}
+
+/* ── Doc Header ── */
+.doc-header{background:linear-gradient(135deg,var(--navy) 0%,#1e3a8a 100%);color:#fff;border-radius:12px;padding:26px 30px;margin-bottom:28px}
+.doc-header h1{font-size:22px;font-weight:800;letter-spacing:-.03em;margin-bottom:6px}
+.doc-header p{font-size:13px;color:rgba(255,255,255,.65);line-height:1.7}
+.doc-meta{display:flex;gap:20px;flex-wrap:wrap;margin-top:14px}
+.doc-meta span{font-size:12px;color:rgba(255,255,255,.55)}
+.doc-meta strong{color:rgba(255,255,255,.85)}
+
+/* ── Section ── */
+section{margin-bottom:48px;scroll-margin-top:24px}
+section > h2{font-size:17px;font-weight:800;color:var(--navy);border-left:4px solid var(--blue);padding-left:11px;margin-bottom:18px}
+section > h3{font-size:14px;font-weight:700;color:#1e3a8a;margin:20px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--gray-m)}
+section > h4{font-size:12.5px;font-weight:700;color:#334155;margin:14px 0 8px}
+p{line-height:1.75;color:#334155;margin-bottom:8px;font-size:13px}
+
+/* ── Concept Badge ── */
+.ent{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:6px;font-size:12px;font-weight:700;white-space:nowrap}
+.ent-group{background:var(--purple-l);color:var(--purple)}
+.ent-tracking{background:var(--blue-l);color:var(--blue)}
+.ent-seg{background:var(--cyan-l);color:var(--cyan)}
+.ent-asset{background:var(--amber-l);color:var(--amber)}
+.ent-dev{background:var(--violet-l);color:var(--violet)}
+.ent-alert{background:var(--pink-l);color:var(--pink)}
+.ent-move{background:#DBEAFE;color:#1D4ED8;border:1px solid #93C5FD}
+.ent-fixed{background:#D1FAE5;color:#065F46;border:1px solid #6EE7B7}
+
+/* ── Entity Map ── */
+.entity-map{background:#fff;border-radius:12px;border:1.5px solid var(--gray-m);padding:24px;margin:12px 0}
+.emap-row{display:flex;align-items:center;gap:0;flex-wrap:wrap;margin-bottom:8px}
+.emap-node{display:flex;flex-direction:column;align-items:center;gap:4px}
+.emap-box{padding:9px 16px;border-radius:9px;font-size:12.5px;font-weight:700;text-align:center;min-width:80px;white-space:nowrap}
+.emap-sub{font-size:10px;color:#94A3B8;font-weight:500}
+.emap-arrow{display:flex;align-items:center;padding:0 6px;color:#CBD5E1;font-size:18px;font-weight:300}
+.emap-label{font-size:10px;color:#94A3B8;text-align:center;min-width:28px}
+.emap-branch{display:flex;flex-direction:column;gap:6px}
+.emap-side{display:flex;align-items:center;gap:0}
+
+/* ── Relation Cards ── */
+.rel-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:12px 0}
+.rel-card{background:#fff;border-radius:10px;border:1.5px solid var(--gray-m);overflow:hidden}
+.rel-card-head{padding:10px 14px;font-size:11.5px;font-weight:800;display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--gray-m)}
+.rel-card-body{padding:14px}
+.rel-diagram{display:flex;align-items:center;gap:0;margin-bottom:10px;flex-wrap:wrap}
+.rel-node{padding:6px 12px;border-radius:7px;font-size:12px;font-weight:700;white-space:nowrap}
+.rel-connector{display:flex;flex-direction:column;align-items:center;padding:0 8px}
+.rel-line{height:2px;width:36px;background:var(--gray-m)}
+.rel-card-label{font-size:10.5px;font-weight:800;color:#94A3B8;letter-spacing:.06em;text-transform:uppercase;margin-bottom:4px}
+.rel-ex{font-size:12px;color:#64748B;line-height:1.65}
+.rel-ex li{margin-left:14px;margin-top:2px}
+.badge-rel{display:inline-block;padding:1px 7px;border-radius:4px;font-size:10.5px;font-weight:800;margin-right:4px}
+.badge-nn{background:#FEE2E2;color:#991B1B}
+.badge-1n{background:#DBEAFE;color:#1D4ED8}
+.badge-n1{background:#D1FAE5;color:#065F46}
+.badge-11{background:#F3F4F6;color:#374151}
+
+/* ── Tree Diagram ── */
+.tree-wrap{background:#fff;border-radius:10px;border:1.5px solid var(--gray-m);padding:16px 20px;margin:10px 0}
+.tree-root{font-size:13px;font-weight:700;margin-bottom:2px}
+.tree-children{padding-left:20px;margin-top:4px;border-left:2px solid var(--gray-m);margin-left:8px}
+.tree-item{padding:4px 0;display:flex;align-items:flex-start;gap:8px;font-size:12.5px;position:relative}
+.tree-item::before{content:'';position:absolute;left:-20px;top:13px;width:16px;height:2px;background:var(--gray-m)}
+.tree-item-label{font-weight:600;color:#1e293b}
+.tree-item-desc{font-size:11.5px;color:#94A3B8;margin-top:1px}
+.tree-children .tree-children{border-left-color:#e2e8f0}
+
+/* ── Callout ── */
+.callout{border-radius:8px;padding:12px 15px;margin:10px 0;font-size:12.5px;line-height:1.7}
+.callout-blue{background:#EFF6FF;border-left:4px solid var(--blue)}
+.callout-green{background:#F0FDF4;border-left:4px solid var(--green)}
+.callout-amber{background:#FFFBEB;border-left:4px solid var(--amber)}
+.callout-red{background:#FEF2F2;border-left:4px solid var(--red)}
+.callout-purple{background:#F5F3FF;border-left:4px solid var(--purple)}
+
+/* ── Comparison Table ── */
+.cmp-table{width:100%;border-collapse:collapse;font-size:12.5px;margin:10px 0;background:#fff;border-radius:10px;overflow:hidden;border:1.5px solid var(--gray-m)}
+.cmp-table th{padding:10px 14px;font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.06em;text-align:left;background:var(--navy);color:#fff}
+.cmp-table th:first-child{background:#1e3a8a}
+.cmp-table td{padding:9px 14px;border-bottom:1px solid var(--gray-m);vertical-align:top;line-height:1.6}
+.cmp-table tr:last-child td{border-bottom:none}
+.cmp-table tr:hover td{background:#FAFCFF}
+.cmp-table td:first-child{font-weight:700;color:#334155;background:#F8FAFF;width:130px}
+.cmp-rec{background:#F0FDF4!important;color:var(--green)!important;font-weight:700!important}
+
+/* ── Connection Matrix ── */
+.matrix{background:#fff;border-radius:10px;border:1.5px solid var(--gray-m);overflow:hidden;margin:10px 0}
+.matrix table{width:100%;border-collapse:collapse;font-size:12px}
+.matrix table th{background:var(--navy);color:#fff;padding:9px 12px;font-weight:700;text-align:center}
+.matrix table th:first-child{text-align:left}
+.matrix table td{padding:9px 12px;border-bottom:1px solid #f1f5f9;text-align:center;vertical-align:middle}
+.matrix table td:first-child{text-align:left;font-weight:600;color:#334155}
+.matrix table tr:last-child td{border-bottom:none}
+.dot-y{color:#10B981;font-weight:900;font-size:15px}
+.dot-n{color:#E2E8F0;font-size:15px}
+.dot-p{color:#F59E0B;font-size:13px;font-weight:700}
+
+/* ── Scenario Cards ── */
+.sc-card{background:#fff;border-radius:12px;border:1.5px solid var(--gray-m);overflow:hidden;margin:14px 0 32px}
+.sc-head{padding:18px 20px;display:flex;align-items:flex-start;gap:14px}
+.sc-emoji{font-size:28px;line-height:1;flex-shrink:0;margin-top:2px}
+.sc-head-info{flex:1}
+.sc-head-title{font-size:16px;font-weight:800;color:#fff;margin-bottom:4px}
+.sc-head-sub{font-size:12.5px;color:rgba(255,255,255,.78);line-height:1.55}
+.sc-tags{display:flex;gap:5px;flex-wrap:wrap;margin-top:8px}
+.sc-tag{display:inline-block;padding:2px 9px;border-radius:4px;font-size:10.5px;font-weight:700;background:rgba(255,255,255,.18);color:#fff;border:1px solid rgba(255,255,255,.3)}
+.sc-body{padding:22px}
+.sc-sect{margin-bottom:22px}
+.sc-sect-label{font-size:10.5px;font-weight:700;color:#94A3B8;text-transform:uppercase;letter-spacing:.09em;margin-bottom:9px;display:flex;align-items:center;gap:6px}
+.sc-tree{background:#F8FAFF;border-radius:9px;border:1px solid #E2E8F0;padding:14px 18px;font-size:12px;line-height:2.1;font-family:'SFMono-Regular',Consolas,monospace;color:#334155;overflow-x:auto}
+.sc-tree .t0{font-size:13px;font-weight:700;color:#1e293b}
+.sc-tree .t1{padding-left:18px}
+.sc-tree .t2{padding-left:36px}
+.sc-tree .t3{padding-left:54px}
+.sc-tree .t4{padding-left:72px}
+.sc-params{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.sc-param{background:#F8FAFF;border:1px solid #E2E8F0;border-radius:8px;padding:10px 13px}
+.sc-param-k{font-size:10px;font-weight:700;color:#94A3B8;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
+.sc-param-v{font-size:12.5px;font-weight:600;color:#1e293b;line-height:1.45}
+.sc-alert-table{width:100%;border-collapse:collapse;font-size:12px;background:#fff;border-radius:9px;overflow:hidden;border:1.5px solid var(--gray-m)}
+.sc-alert-table th{padding:8px 11px;background:var(--navy);color:#fff;font-size:11px;font-weight:700;text-align:left}
+.sc-alert-table td{padding:8px 11px;border-bottom:1px solid #f1f5f9;vertical-align:middle;line-height:1.5}
+.sc-alert-table tr:last-child td{border-bottom:none}
+.sc-alert-table tr:hover td{background:#FAFCFF}
+.sc-config{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.sc-col{background:#F8FAFF;border:1px solid #E2E8F0;border-radius:9px;padding:13px 15px}
+.sc-col-title{font-size:11px;font-weight:700;color:#475569;text-transform:uppercase;letter-spacing:.05em;margin-bottom:9px;padding-bottom:7px;border-bottom:1px solid #E2E8F0;display:flex;align-items:center;gap:5px}
+.sc-col-item{display:flex;align-items:flex-start;gap:6px;font-size:12px;color:#334155;margin-bottom:6px;line-height:1.55}
+.sc-col-item:last-child{margin-bottom:0}
+.sc-check{color:#10B981;font-weight:900;flex-shrink:0;font-size:12px}
+.sc-divider{border:none;border-top:2px dashed var(--gray-m);margin:32px 0 10px}
+
+/* ── Hierarchy Diagram ── */
+.hier-diagram{background:#fff;border-radius:12px;border:1.5px solid var(--gray-m);padding:28px 32px;margin:14px 0}
+.hier-level{display:flex;align-items:stretch;gap:16px;margin-bottom:0}
+.hier-node{border-radius:10px;padding:14px 18px;min-width:140px;position:relative}
+.hier-line{display:flex;align-items:center;justify-content:center;padding:0 4px;color:#CBD5E1;font-size:20px}
+.hier-branch{display:flex;flex-direction:column;gap:10px}
+.hier-caption{font-size:11px;color:#94A3B8;margin-top:5px;line-height:1.5}
+
+/* ── Decision Table ── */
+.decision-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:12px 0}
+.decision-card{background:#fff;border-radius:10px;border:1.5px solid var(--gray-m);overflow:hidden}
+.decision-head{padding:11px 15px;font-size:12px;font-weight:800;display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--gray-m)}
+.decision-body{padding:14px 15px}
+.decision-q{font-size:13px;font-weight:700;color:#1e293b;margin-bottom:10px}
+.decision-opts{display:flex;flex-direction:column;gap:8px}
+.decision-opt{display:flex;align-items:flex-start;gap:8px;padding:8px 10px;border-radius:7px;font-size:12px;line-height:1.6}
+.decision-opt-yes{background:#F0FDF4;border:1px solid #A7F3D0}
+.decision-opt-no{background:#FFF7ED;border:1px solid #FED7AA}
+
+/* ── Mobile ── */
+#mob-toggle{display:none;position:fixed;top:12px;left:12px;z-index:200;width:40px;height:40px;background:var(--navy);border:none;border-radius:8px;cursor:pointer;flex-direction:column;align-items:center;justify-content:center;gap:5px;padding:0}
+#mob-toggle span{display:block;width:20px;height:2px;background:#fff;border-radius:2px;transition:all .2s}
+#sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:99}
+@media(max-width:767px){
+  #mob-toggle{display:flex}
+  #sidebar{transform:translateX(-100%);transition:transform .25s ease;z-index:150}
+  body.sidebar-open #sidebar{transform:translateX(0)}
+  body.sidebar-open #sidebar-overlay{display:block}
+  #main{margin-left:0;padding:20px 16px 60px}
+  .doc-header{padding:18px 16px;margin-top:52px}
+  .doc-header h1{font-size:17px}
+  section h2{font-size:16px}
+}
+</style>
+</head>
+<body>
+
+<!-- 모바일 햄버거 버튼 -->
+<button id="mob-toggle" aria-label="메뉴 열기">
+  <span></span><span></span><span></span>
+</button>
+<!-- 사이드바 오버레이 -->
+<div id="sidebar-overlay"></div>
+
+<!-- ══ SIDEBAR ══ -->
+<div id="sidebar">
+  <div class="logo">
+    <div class="brand">WILLOG</div>
+    <div class="doc-t">통합 플랫폼 핵심 구조도<br>v1.0 · 2026-05-23</div>
+  </div>
+  <nav>
+    <div class="grp">개요</div>
+    <a href="#platform-users">플랫폼 사용자 구조</a>
+    <a href="#overview-erd">전체 구조 관계도</a>
+    <a href="#glossary">0. 용어 정의</a>
+
+    <div class="grp">핵심 구조</div>
+    <a href="#tenant-connection">1. 회사(Tenant) 간 연결 구조</a>
+    <a href="#design-decisions"><span class="dot" style="background:#A78BFA"></span>내부 논의 및 검토 필요사항</a>
+    <a href="#group-tracking">2. 그룹 / 트래킹 / 세그먼트</a>
+    <a href="#measurement-device">3. 측정대상 &amp; 디바이스</a>
+    <a href="#alert-preset">4. 알림 프리셋</a>
+    <a href="#decision-guide">7. 권장 구조 및 결정 기준</a>
+
+    <div class="grp">시나리오 (참고)</div>
+    <a href="#sc-pharma"> 바이오 콜드체인</a>
+    <a href="#sc-pico"> 바이오테크 A</a>
+    <a href="#sc-corning"> 국제운송 (특수소재 A)</a>
+    <a href="#sc-coupang"> 창고 공간 (대형물류 A)</a>
+  </nav>
+</div>
+
+<!-- ══ MAIN ══ -->
+<div id="main">
+
+<!-- Header -->
+<div class="doc-header">
+  <h1>통합 플랫폼 핵심 구조도 — 계층 · 관계 · 시나리오</h1>
+  <p>그룹 / 트래킹 / 세그먼트 / 측정대상 / 디바이스 / 알림 프리셋의 계층 구조와 실고객사 시나리오를 정리했습니다.</p>
+  <div class="doc-meta">
+    <span><strong>작성일</strong>  2026-05-23</span>
+    <span><strong>작성자</strong>  Coco</span>
+    <span><strong>버전</strong>  v1.0</span>
+  </div>
+</div>
+
+<div id="view-plan">
+
+
+<!-- ══════════════════════════════════
+     §0. 용어 정의
+══════════════════════════════════ -->
+<section id="glossary">
+  <h2>0. 용어 정의</h2>
+  <p>플랫폼 전반에서 사용하는 핵심 용어를 정리했습니다. BE 개발자·기획자·현업이 동일한 언어로 소통하기 위한 기준으로 작성했습니다.</p>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px">
+
+    <div class="rel-card">
+      <div class="rel-card-head" style="background:#EDE9FE;color:#5B21B6">
+        
+        <div>
+          <div style="font-size:13px;font-weight:800">회사 (Tenant)</div>
+          <div style="font-size:10.5px;opacity:.7">tenant_id · 독립 조직 단위</div>
+        </div>
+      </div>
+      <div class="rel-card-body" style="font-size:12.5px;color:#334155;line-height:1.7">
+        플랫폼의 <strong>최상위 회사 단위</strong>. 플랫폼에 가입한 각 회사가 하나의 Tenant입니다. Tenant는 <strong>운송사(Carrier)</strong> 또는 <strong>화주사(Shipper)</strong> 타입을 가지며, 타입에 따라 사용 가능한 기능이 달라집니다. Tenant 간 데이터는 <code style="background:#F1F5F9;padding:1px 4px;border-radius:3px">shipper_code</code>로만 크로스 연결됩니다.
+      </div>
+    </div>
+
+    <div class="rel-card">
+      <div class="rel-card-head" style="background:#F5F3FF;color:#6D28D9">
+        
+        <div>
+          <div style="font-size:13px;font-weight:800">그룹 (Group)</div>
+          <div style="font-size:10.5px;opacity:.7">group_id · 논리적 묶음</div>
+        </div>
+      </div>
+      <div class="rel-card-body" style="font-size:12.5px;color:#334155;line-height:1.7">
+        여러 트래킹(또는 그룹)을 묶는 <strong>운영 단위</strong>. 최대 2단계 중첩. 멀티모달 전체 여정을 하나로 표현할 때 사용합니다.
+      </div>
+    </div>
+
+    <div class="rel-card">
+      <div class="rel-card-head" style="background:#DBEAFE;color:#1D4ED8">
+        
+        <div>
+          <div style="font-size:13px;font-weight:800">트래킹 (Tracking)</div>
+          <div style="font-size:10.5px;opacity:.7">tracking_id · 핵심 모니터링 단위</div>
+        </div>
+      </div>
+      <div class="rel-card-body" style="font-size:12.5px;color:#334155;line-height:1.7">
+        플랫폼의 <strong>핵심 단위</strong>. <strong>운송형(TRANSPORT)</strong>: 이동하는 운송 단위 — <strong>공간형(SPACE)</strong>: 고정 공간 (창고·챔버 등). 주문/운행/공간 기준으로 등록합니다.
+      </div>
+    </div>
+
+    <div class="rel-card">
+      <div class="rel-card-head" style="background:#CFFAFE;color:#0E7490">
+        
+        <div>
+          <div style="font-size:13px;font-weight:800">세그먼트 (Segment)</div>
+          <div style="font-size:10.5px;opacity:.7">segment_id · 경유지 분리 (선택)</div>
+        </div>
+      </div>
+      <div class="rel-card-body" style="font-size:12.5px;color:#334155;line-height:1.7">
+        트래킹 내 경유지별로 구간을 분리합니다. 구간별 독립 온도 집계 및 알림 프리셋 적용 가능. 주로 국내 운송에서 활용.
+      </div>
+    </div>
+
+    <div class="rel-card">
+      <div class="rel-card-head" style="background:#FEF3C7;color:#92400E">
+        
+        <div>
+          <div style="font-size:13px;font-weight:800">측정대상 (MeasurementTarget)</div>
+          <div style="font-size:10.5px;opacity:.7">target_id · 물리 자산</div>
+        </div>
+      </div>
+      <div class="rel-card-body" style="font-size:12.5px;color:#334155;line-height:1.7">
+        디바이스가 부착되는 <strong>물리 자산</strong>. 차량·컨테이너·팔레트·챔버 등 16종. 트래킹과 1:1 / 1:N / N:1 관계. 측정대상디바이스는 항상 1:1.
+      </div>
+    </div>
+
+    <div class="rel-card">
+      <div class="rel-card-head" style="background:#EDE9FE;color:#5B21B6">
+        
+        <div>
+          <div style="font-size:13px;font-weight:800">디바이스 (Device)</div>
+          <div style="font-size:10.5px;opacity:.7">device_id · 센서 장비</div>
+        </div>
+      </div>
+      <div class="rel-card-body" style="font-size:12.5px;color:#334155;line-height:1.7">
+        온도·습도·충격 등 센서 데이터를 수집하는 장비. T1G / S1 / T1P / V2P / GW / APP / T1W 모델. 측정대상에 1:1로 부착됩니다.
+      </div>
+    </div>
+
+    <div class="rel-card">
+      <div class="rel-card-head" style="background:#FCE7F3;color:#9D174D">
+        
+        <div>
+          <div style="font-size:13px;font-weight:800">알림 프리셋 (AlertPreset)</div>
+          <div style="font-size:10.5px;opacity:.7">alert_preset_id · 재사용 알림 규칙 묶음</div>
+        </div>
+      </div>
+      <div class="rel-card-body" style="font-size:12.5px;color:#334155;line-height:1.7">
+        온도·습도·경로 등 알림 조건을 묶어 재사용하는 단위. 트래킹 또는 세그먼트에 N:M으로 연결. 복수 프리셋 동시 적용 가능.
+      </div>
+    </div>
+
+    <div class="rel-card">
+      <div class="rel-card-head" style="background:#D1FAE5;color:#065F46">
+        
+        <div>
+          <div style="font-size:13px;font-weight:800">화주코드 (shipper_code)</div>
+          <div style="font-size:10.5px;opacity:.7">크로스 Tenant 연결 코드 · 모든 Tenant 보유</div>
+        </div>
+      </div>
+      <div class="rel-card-body" style="font-size:12.5px;color:#334155;line-height:1.7">
+        모든 Tenant가 보유하는 크로스 Tenant 연결 코드. 내 회사 화물을 다른 운송사가 운송할 때, 운송사가 트래킹 등록 시 내 shipper_code를 입력하면 내 Tenant 대시보드에 자동 연결됩니다. <strong>운송사 타입도 화주 역할 시 자신의 shipper_code를 제공할 수 있습니다.</strong>
+      </div>
+    </div>
+
+  </div>
+</section>
+<!-- ══════════════════════════════════
+     플랫폼 주 사용자 구조
+══════════════════════════════════ -->
+<section id="platform-users">
+  <h2>플랫폼 주 사용자 구조</h2>
+  <p>플랫폼에 가입하는 각 회사는 하나의 Tenant입니다. Tenant 생성 시 <strong>운송사(Carrier)</strong> 또는 <strong>화주사(Shipper)</strong> 타입을 선택하며, 타입에 따라 사용 가능한 기능 범위가 달라집니다.</p>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-top:18px">
+
+    <div style="background:#EFF6FF;border:2px solid #3B82F6;border-radius:12px;padding:20px 18px">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+        
+        <div>
+          <div style="font-size:14px;font-weight:800;color:#1D4ED8">운송사 (Carrier)</div>
+          <div style="font-size:11px;color:#3B82F6;font-weight:700">플랫폼 주 사용자</div>
+        </div>
+      </div>
+      <ul style="list-style:none;display:flex;flex-direction:column;gap:7px">
+        <li style="display:flex;align-items:flex-start;gap:7px;font-size:12.5px;color:#1E3A5F;line-height:1.6">
+          
+          차량·컨테이너·항공기 등 <strong>운송수단 보유</strong>
+        </li>
+        <li style="display:flex;align-items:flex-start;gap:7px;font-size:12.5px;color:#1E3A5F;line-height:1.6">
+          
+          측정 대상에 <strong>센서 디바이스 부착</strong>
+        </li>
+        <li style="display:flex;align-items:flex-start;gap:7px;font-size:12.5px;color:#1E3A5F;line-height:1.6">
+          
+          트래킹 등록 · 그룹 구성 · 알림 설정
+        </li>
+        <li style="display:flex;align-items:flex-start;gap:7px;font-size:12.5px;color:#1E3A5F;line-height:1.6">
+          
+          온도·위치 등 <strong>실시간 모니터링</strong>
+        </li>
+      </ul>
+    </div>
+
+    <div style="background:#F0FDF4;border:2px solid #22C55E;border-radius:12px;padding:20px 18px">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+        
+        <div>
+          <div style="font-size:14px;font-weight:800;color:#15803D">화주사 (Shipper)</div>
+          <div style="font-size:11px;color:#22C55E;font-weight:700">조회 전용 사용자</div>
+        </div>
+      </div>
+      <ul style="list-style:none;display:flex;flex-direction:column;gap:7px">
+        <li style="display:flex;align-items:flex-start;gap:7px;font-size:12.5px;color:#14532D;line-height:1.6">
+          
+          운송사에 <strong>발주 / 주문</strong>을 의뢰
+        </li>
+        <li style="display:flex;align-items:flex-start;gap:7px;font-size:12.5px;color:#14532D;line-height:1.6">
+          
+          자사 화물의 <strong>배송 현황 조회</strong>만 가능
+        </li>
+        <li style="display:flex;align-items:flex-start;gap:7px;font-size:12.5px;color:#14532D;line-height:1.6">
+          
+          <code style="background:#DCFCE7;padding:1px 5px;border-radius:3px;font-size:11px">shipper_code</code>로 크로스 Tenant 연결
+        </li>
+        <li style="display:flex;align-items:flex-start;gap:7px;font-size:12.5px;color:#14532D;line-height:1.6">
+          
+          <span style="color:#64748B">트래킹 등록 · 디바이스 설정 불가</span>
+        </li>
+      </ul>
+    </div>
+
+    <div style="background:#FFF7ED;border:2px dashed #F97316;border-radius:12px;padding:20px 18px">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+        
+        <div>
+          <div style="font-size:14px;font-weight:800;color:#EA580C">화주 겸 운송사</div>
+          <div style="font-size:11px;color:#F97316;font-weight:700">운송사 측면으로 사용</div>
+        </div>
+      </div>
+      <ul style="list-style:none;display:flex;flex-direction:column;gap:7px">
+        <li style="display:flex;align-items:flex-start;gap:7px;font-size:12.5px;color:#7C2D12;line-height:1.6">
+          
+          자체 운송 수단을 보유한 제조사·유통사
+        </li>
+        <li style="display:flex;align-items:flex-start;gap:7px;font-size:12.5px;color:#7C2D12;line-height:1.6">
+          
+          화주이면서 자사 운송까지 직접 관리
+        </li>
+        <li style="display:flex;align-items:flex-start;gap:7px;font-size:12.5px;color:#7C2D12;line-height:1.6">
+          <span style="color:#F97316;font-size:14px;flex-shrink:0">→</span>
+          <strong>운송사 관점</strong>에서 플랫폼 사용
+        </li>
+        <li style="display:flex;align-items:flex-start;gap:7px;font-size:12.5px;color:#7C2D12;line-height:1.6">
+          <span style="color:#F97316;font-size:14px;flex-shrink:0">→</span>
+          운송수단·디바이스 등록 및 전체 기능 이용
+        </li>
+      </ul>
+    </div>
+
+  </div>
+
+  <div class="callout callout-blue" style="margin-top:18px">
+    <strong>핵심 원칙:</strong> 모든 Tenant는 고유한 <code>shipper_code</code>를 보유합니다. 트래킹 등록 시 상대 회사의 <code>shipper_code</code>를 입력하면 해당 Tenant에서 자동으로 읽기 전용 조회가 연결됩니다. 운송사 타입도 다른 운송사에게 화물을 위탁하는 경우(화주 역할) 자신의 <code>shipper_code</code>를 제공할 수 있습니다.
+  </div>
+</section>
+
+<!-- ══════════════════════════════════
+     전체 구조 관계도
+══════════════════════════════════ -->
+<section id="overview-erd">
+  <h2>통합플랫폼 전체 주요 구조 관계</h2>
+  <p>플랫폼을 구성하는 핵심 개념과 그 연결 관계를 한눈에 정리했습니다.</p>
+
+  <div class="erd-wrap" style="margin-top:16px">
+
+    <!-- 핵심 계층 흐름 -->
+    <div style="font-size:11px;font-weight:700;color:#94A3B8;text-transform:uppercase;letter-spacing:.08em;margin-bottom:20px">핵심 계층 흐름</div>
+
+    <!-- Row 1: 회사(Tenant) → Group → Tracking → Segment -->
+    <div class="erd-row">
+      <div class="erd-box" style="background:#EDE9FE;color:#5B21B6;border:1.5px solid #C4B5FD">회사(Tenant)<br><span style="font-size:10px;font-weight:500;opacity:.75">Tenant</span></div>
+      <div class="erd-rel"><span>1 : N</span><div class="erd-line"></div></div>
+      <div class="erd-box" style="background:#F5F3FF;color:#6D28D9;border:1.5px solid #DDD6FE">그룹<br><span style="font-size:10px;font-weight:500;opacity:.75">최대 2단계</span></div>
+      <div class="erd-rel"><span>1 : N</span><div class="erd-line"></div></div>
+      <div class="erd-box" style="background:#DBEAFE;color:#1D4ED8;border:2px solid #3B82F6;font-weight:800">트래킹 <br><span style="font-size:10px;font-weight:500;opacity:.75">운송형 / 공간형</span></div>
+      <div class="erd-rel"><span>1 : N</span><div class="erd-line"></div></div>
+      <div class="erd-box" style="background:#CFFAFE;color:#0E7490;border:1.5px solid #67E8F9">세그먼트<br><span style="font-size:10px;font-weight:500;opacity:.75">경유지 분리 (선택)</span></div>
+    </div>
+
+    <!-- vertical connector from Tracking down -->
+    <div style="padding-left:330px">
+      <div style="height:18px;width:2px;background:#CBD5E1;margin-left:20px"></div>
+    </div>
+
+    <!-- Row 2: Tracking  측정대상  디바이스 -->
+    <div class="erd-row">
+      <div style="width:330px;flex-shrink:0"></div>
+      <div class="erd-box" style="background:#DBEAFE;color:#1D4ED8;border:2px solid #3B82F6;font-weight:800">트래킹 </div>
+      <div class="erd-rel"><span style="color:#DB2777">N : M</span><div class="erd-line"></div><span style="font-size:9.5px;color:#94A3B8">연결</span></div>
+      <div class="erd-box" style="background:#FEF3C7;color:#92400E;border:1.5px solid #FCD34D">측정대상<br><span style="font-size:10px;font-weight:500;opacity:.75">16종 물리 자산</span></div>
+      <div class="erd-rel"><span>1 : 1</span><div class="erd-line"></div></div>
+      <div class="erd-box" style="background:#EDE9FE;color:#5B21B6;border:1.5px solid #C4B5FD">디바이스<br><span style="font-size:10px;font-weight:500;opacity:.75">T1G·S1·T1P·V2P 등</span></div>
+    </div>
+
+    <!-- vertical connector -->
+    <div style="padding-left:330px">
+      <div style="height:18px;width:2px;background:#CBD5E1;margin-left:20px"></div>
+    </div>
+
+    <!-- Row 3: Tracking  알림 프리셋 -->
+    <div class="erd-row">
+      <div style="width:330px;flex-shrink:0"></div>
+      <div class="erd-box" style="background:#DBEAFE;color:#1D4ED8;border:2px solid #3B82F6;font-weight:800">트래킹 </div>
+      <div class="erd-rel"><span style="color:#DB2777">N : M</span><div class="erd-line"></div><span style="font-size:9.5px;color:#94A3B8">연결</span></div>
+      <div class="erd-box" style="background:#FCE7F3;color:#9D174D;border:1.5px solid #F9A8D4">알림 프리셋<br><span style="font-size:10px;font-weight:500;opacity:.75">재사용 규칙 묶음</span></div>
+      <div style="margin-left:10px;font-size:11.5px;color:#64748B;align-self:center">→ 세그먼트별 개별 적용 가능</div>
+    </div>
+
+    <!-- vertical connector -->
+    <div style="padding-left:330px">
+      <div style="height:18px;width:2px;background:#CBD5E1;margin-left:20px"></div>
+    </div>
+
+    <!-- Row 4: Tracking  제품 마스터 -->
+    <div class="erd-row">
+      <div style="width:330px;flex-shrink:0"></div>
+      <div class="erd-box" style="background:#DBEAFE;color:#1D4ED8;border:2px solid #3B82F6;font-weight:800">트래킹 </div>
+      <div class="erd-rel"><span style="color:#DB2777">N : M</span><div class="erd-line"></div><span style="font-size:9.5px;color:#94A3B8">연결</span></div>
+      <div class="erd-box" style="background:#D1FAE5;color:#065F46;border:1.5px solid #6EE7B7">제품 마스터<br><span style="font-size:10px;font-weight:500;opacity:.75">운송 화물 정보</span></div>
+      <div style="margin-left:10px;font-size:11.5px;color:#64748B;align-self:center">→ 화주사별 읽기 전용</div>
+    </div>
+
+    <!-- Cross-Tenant 구분선 -->
+    <div style="margin-top:24px;padding-top:18px;border-top:1px dashed var(--gray-m)">
+      <div style="font-size:11px;font-weight:700;color:#94A3B8;margin-bottom:14px;text-transform:uppercase;letter-spacing:.08em">크로스 Tenant (멀티 Tenant 연결)</div>
+      <div class="erd-row">
+        <div class="erd-box" style="background:#EDE9FE;color:#5B21B6;border:1.5px solid #C4B5FD">회사 A<br><span style="font-size:10px;font-weight:500;opacity:.75">운송사 (Carrier)</span></div>
+        <div class="erd-rel"><span style="color:#059669">N : M</span><div class="erd-line"></div><span style="font-size:9.5px;color:#94A3B8">shipper_code</span></div>
+        <div class="erd-box" style="background:#D1FAE5;color:#065F46;border:1.5px solid #6EE7B7">회사 B<br><span style="font-size:10px;font-weight:500;opacity:.75">화주사 (Shipper)</span></div>
+        <div style="margin-left:20px;font-size:11.5px;color:#64748B;align-self:center">운송사가 shipper_code 입력 → 화주사 읽기 전용 조회</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- 관계 요약 카드 -->
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:16px">
+    <div style="background:#F8FAFF;border:1px solid var(--gray-m);border-radius:8px;padding:12px 14px;text-align:center">
+      <div style="font-size:18px;margin-bottom:4px"></div>
+      <div style="font-size:11px;font-weight:800;color:var(--navy)">회사(Tenant) → 그룹</div>
+      <div style="font-size:10.5px;color:#64748B;margin-top:3px">1 : N</div>
+    </div>
+    <div style="background:#F8FAFF;border:1px solid var(--gray-m);border-radius:8px;padding:12px 14px;text-align:center">
+      <div style="font-size:18px;margin-bottom:4px"></div>
+      <div style="font-size:11px;font-weight:800;color:var(--navy)">그룹 → 트래킹</div>
+      <div style="font-size:10.5px;color:#64748B;margin-top:3px">1 : N</div>
+    </div>
+    <div style="background:#F8FAFF;border:1px solid var(--gray-m);border-radius:8px;padding:12px 14px;text-align:center">
+      <div style="font-size:18px;margin-bottom:4px"></div>
+      <div style="font-size:11px;font-weight:800;color:var(--navy)">트래킹  측정대상</div>
+      <div style="font-size:10.5px;color:#64748B;margin-top:3px">N : M (1:1/1:N/N:1)</div>
+    </div>
+    <div style="background:#F8FAFF;border:1px solid var(--gray-m);border-radius:8px;padding:12px 14px;text-align:center">
+      <div style="font-size:18px;margin-bottom:4px"></div>
+      <div style="font-size:11px;font-weight:800;color:var(--navy)">트래킹  알림 프리셋</div>
+      <div style="font-size:10.5px;color:#64748B;margin-top:3px">N : M</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════
+     §1. 회사(Tenant) 간 연결 구조
+══════════════════════════════════ -->
+<section id="tenant-connection">
+  <h2>1. 회사(Tenant) 간 연결 구조</h2>
+  <p>Willog 플랫폼의 최상위 단위는 <strong>회사(Tenant)</strong>입니다. 플랫폼에 가입한 각 회사가 하나의 Tenant이며, Tenant는 <strong>운송사(Carrier) / 화주사(Shipper)</strong> 타입을 가집니다. Tenant 간 데이터 연결은 <code>shipper_code</code>를 통해서만 이루어집니다.</p>
+
+  <!-- 회사(Tenant) 카드 2열 -->
+  <div class="rel-grid" style="grid-template-columns:1fr 1fr;margin-bottom:16px">
+    <div class="rel-card">
+      <div class="rel-card-head" style="background:var(--blue-l);color:var(--blue)">
+        
+        <span>회사 A — 운송사 (Carrier)</span>
+      </div>
+      <div class="rel-card-body">
+        <div class="rel-card-label">역할</div>
+        <ul class="rel-ex">
+          <li>트래킹·디바이스·측정대상·알림 등록·운영 주체</li>
+          <li>제품 마스터 등록 (어드민/매니저)</li>
+          <li>화주코드 입력 → 화주사에 데이터 연결</li>
+        </ul>
+        <div class="rel-card-label" style="margin-top:8px">사용자 역할</div>
+        <div class="rel-ex">어드민 / 매니저 / 일반 담당자</div>
+      </div>
+    </div>
+    <div class="rel-card">
+      <div class="rel-card-head" style="background:var(--green-l);color:var(--green)">
+        
+        <span>회사 B — 화주사 (Shipper)</span>
+      </div>
+      <div class="rel-card-body">
+        <div class="rel-card-label">역할</div>
+        <ul class="rel-ex">
+          <li>운송사가 연결한 트래킹 데이터 읽기 전용 조회</li>
+          <li>자체 물류 인프라 보유 시 운송사로도 등록 가능 (이중 역할)</li>
+        </ul>
+        <div class="rel-card-label" style="margin-top:8px">조회 범위</div>
+        <div class="rel-ex">자사 shipper_code 가 연결된 트래킹만 노출</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 회사 간(크로스 Tenant) 연결 케이스 -->
+  <div style="font-size:13px;font-weight:800;color:var(--navy);margin:18px 0 10px">회사 간(크로스 Tenant) 연결 케이스</div>
+  <div class="rel-grid" style="grid-template-columns:1fr 1fr;margin-bottom:16px">
+    <div class="rel-card">
+      <div class="rel-card-head" style="background:var(--amber-l);color:var(--amber)">
+        
+        <span>케이스 1 — 사용자 초대</span>
+      </div>
+      <div class="rel-card-body" style="font-size:12.5px;color:#334155;line-height:1.7">
+        운송사(회사 A)가 화주사 담당자를 <strong>회사 A 사용자로 직접 초대</strong>합니다.<br>
+        화주사 담당자는 회사 A 내에서 본인 화주코드에 연결된 트래킹만 조회 가능합니다.
+        <div class="callout" style="margin-top:10px;padding:8px 12px;background:#FFFBEB;border-left:3px solid #F59E0B;font-size:11.5px">
+          회사 B 없이 운영 가능. 화주사 측 별도 계정 불필요.
+        </div>
+      </div>
+    </div>
+    <div class="rel-card">
+      <div class="rel-card-head" style="background:var(--violet-l);color:#5B21B6">
+        
+        <span>케이스 2 — 회사 간 연결</span>
+      </div>
+      <div class="rel-card-body" style="font-size:12.5px;color:#334155;line-height:1.7">
+        화주사가 <strong>별도 회사 B 계정을 독립 운영</strong>하면서 운송사(회사 A)에서 shipper_code를 등록하면 회사 B 대시보드에 자동으로 연결된 트래킹이 노출됩니다.
+        <div class="callout" style="margin-top:10px;padding:8px 12px;background:#F5F3FF;border-left:3px solid #8B5CF6;font-size:11.5px">
+          두 회사 계정은 독립적. 데이터는 읽기 전용으로만 공유.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 연결 흐름 다이어그램 -->
+  <div class="tree-wrap" style="font-family:'SFMono-Regular',Consolas,monospace;font-size:12px;line-height:2;color:#334155">
+    <div style="font-size:11px;font-weight:700;color:#94A3B8;text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px">회사 간 데이터 흐름</div>
+    <div style="display:grid;grid-template-columns:1fr auto 1fr;gap:8px;align-items:center">
+      <div style="background:var(--blue-l);border:1.5px solid #93C5FD;border-radius:8px;padding:12px 16px;font-size:12px;line-height:1.8">
+        <div style="font-weight:700;color:#1D4ED8;margin-bottom:4px">회사 A — 운송사</div>
+        <div>트래킹 등록</div>
+        <div>shipper_code: <strong>KDJ</strong> 입력</div>
+        <div style="color:#94A3B8;font-size:11px">(미입력 시 자사 전용 — 운송사도 화주 역할 시 입력 가능)</div>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:4px;padding:0 8px">
+        <span style="font-size:11px;font-weight:700;color:#F59E0B">shipper_code</span>
+        <div style="font-size:18px;color:#F59E0B">⟶</div>
+        <span style="font-size:10px;color:#94A3B8">읽기 전용</span>
+      </div>
+      <div style="background:var(--green-l);border:1.5px solid #6EE7B7;border-radius:8px;padding:12px 16px;font-size:12px;line-height:1.8">
+        <div style="font-weight:700;color:#059669;margin-bottom:4px">회사 B — 화주사</div>
+        <div>KDJ 연결 트래킹 자동 노출</div>
+        <div style="color:#94A3B8;font-size:11px">(수정·삭제 불가)</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout callout-blue" style="margin-top:16px">
+    <strong>제품 마스터:</strong> 운송사 어드민/매니저가 등록. 화주사는 본인 shipper_code에 연결된 제품 마스터만 읽기 전용 조회 가능.
+  </div>
+</section>
+
+<!-- ══════════════════════════════════
+     §1-A. 내부 논의 및 검토 필요사항 — 회사(Tenant) 구조
+══════════════════════════════════ -->
+<section id="design-decisions">
+  <h2>내부 논의 및 검토 필요사항 — 회사(Tenant) 구조</h2>
+  <p>Tenant 구조 설계 과정에서 검토가 필요한 항목들을 정리했습니다.</p>
+
+  <div class="callout callout-amber" style="margin:12px 0 18px">
+    <strong>미확정:</strong> 아래 내용은 확정된 스펙이 아닙니다. 팀 논의 후 결론이 나면 해당 항목을 업데이트 예정입니다.
+  </div>
+  <p style="display:none"></p>
+
+  <div style="display:flex;flex-direction:column;gap:16px;margin-top:18px">
+
+    <!-- 결정 1 -->
+    <div style="background:#fff;border:1.5px solid #E2E8F0;border-radius:12px;overflow:hidden">
+      <div style="background:#EDE9FE;padding:12px 18px;display:flex;align-items:center;gap:10px">
+        <div style="background:#7C3AED;color:#fff;font-size:11px;font-weight:800;padding:3px 9px;border-radius:5px;white-space:nowrap">논의 1</div>
+        <div style="font-size:13px;font-weight:800;color:#4C1D95">Tenant 개념 — 운송사/화주사가 각각 별도 Tenant를 갖는 것이 아니다</div>
+      </div>
+      <div style="padding:14px 18px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px">
+        <div>
+          <div style="font-size:10.5px;font-weight:700;color:#94A3B8;text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px">기존 오해</div>
+          <div style="font-size:12.5px;color:#64748B;line-height:1.7;background:#FEF2F2;border-radius:8px;padding:10px 12px">운송사 Tenant / 화주사 Tenant가 별개의 단위처럼 표현되어, 두 타입이 구조적으로 분리된 것으로 오해 가능</div>
+        </div>
+        <div>
+          <div style="font-size:10.5px;font-weight:700;color:#94A3B8;text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px">올바른 개념</div>
+          <div style="font-size:12.5px;color:#1E293B;line-height:1.7;background:#F0FDF4;border-radius:8px;padding:10px 12px"><strong>회사 = Tenant</strong>. 운송사/화주사는 Tenant의 타입(type) 속성값이지, 별개의 구조 단위가 아님</div>
+        </div>
+        <div>
+          <div style="font-size:10.5px;font-weight:700;color:#94A3B8;text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px">적용</div>
+          <div style="font-size:12.5px;color:#1E293B;line-height:1.7;background:#F8FAFF;border-radius:8px;padding:10px 12px">Tenant 생성 시 운송사 / 화주사 타입 중 하나를 선택. 타입에 따라 사용 가능한 기능 범위가 달라짐</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 결정 2 -->
+    <div style="background:#fff;border:1.5px solid #E2E8F0;border-radius:12px;overflow:hidden">
+      <div style="background:#DBEAFE;padding:12px 18px;display:flex;align-items:center;gap:10px">
+        <div style="background:#1D4ED8;color:#fff;font-size:11px;font-weight:800;padding:3px 9px;border-radius:5px;white-space:nowrap">논의 2</div>
+        <div style="font-size:13px;font-weight:800;color:#1E3A8A">타입 구분 기준 — "직접 트래킹을 생성·관리하는가?"</div>
+      </div>
+      <div style="padding:14px 18px">
+        <div style="font-size:12.5px;color:#334155;line-height:1.7;margin-bottom:12px">회사 타입이 제어하는 것은 <strong>기능 접근 범위</strong>가 아니라, <strong>데이터 연계 구조</strong>(shipper_code)입니다. 타입을 2가지로 단순화한 근거:</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <div style="background:#EFF6FF;border:1.5px solid #BFDBFE;border-radius:8px;padding:12px 14px">
+            <div style="font-size:12px;font-weight:800;color:#1D4ED8;margin-bottom:8px">운송사 (Carrier) 타입</div>
+            <div style="font-size:12px;color:#1E40AF;line-height:1.7">트래킹을 <strong>직접 생성·관리</strong>하는 주체.<br>운송수단·디바이스 등록 가능.<br>shipper_code 입력하여 화주사와 데이터 연결.</div>
+            <div style="margin-top:10px;display:flex;flex-direction:column;gap:4px">
+              <div style="font-size:11px;color:#3B82F6;background:#DBEAFE;border-radius:5px;padding:4px 8px">전문 운송사</div>
+              <div style="font-size:11px;color:#3B82F6;background:#DBEAFE;border-radius:5px;padding:4px 8px">화주이나 자체 운송수단 보유한 회사</div>
+              <div style="font-size:11px;color:#3B82F6;background:#DBEAFE;border-radius:5px;padding:4px 8px">쿠팡처럼 자사 창고·물류센터 운영 회사</div>
+            </div>
+          </div>
+          <div style="background:#F0FDF4;border:1.5px solid #BBF7D0;border-radius:8px;padding:12px 14px">
+            <div style="font-size:12px;font-weight:800;color:#15803D;margin-bottom:8px">화주사 (Shipper) 타입</div>
+            <div style="font-size:12px;color:#166534;line-height:1.7">트래킹을 <strong>직접 생성하지 않는</strong> 주체.<br>자사 화물에 연결된 트래킹 <strong>조회 전용</strong>.<br>자신의 shipper_code를 운송사에게 제공.</div>
+            <div style="margin-top:10px;display:flex;flex-direction:column;gap:4px">
+              <div style="font-size:11px;color:#16A34A;background:#DCFCE7;border-radius:5px;padding:4px 8px">운송수단 없이 외부 운송사에만 의뢰하는 제조사·유통사</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 결정 3 -->
+    <div style="background:#fff;border:1.5px solid #E2E8F0;border-radius:12px;overflow:hidden">
+      <div style="background:#FEF3C7;padding:12px 18px;display:flex;align-items:center;gap:10px">
+        <div style="background:#D97706;color:#fff;font-size:11px;font-weight:800;padding:3px 9px;border-radius:5px;white-space:nowrap">논의 3</div>
+        <div style="font-size:13px;font-weight:800;color:#92400E">shipper_code — 모든 Tenant가 보유</div>
+      </div>
+      <div style="padding:14px 18px;display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div>
+          <div style="font-size:10.5px;font-weight:700;color:#94A3B8;text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px">결정 근거</div>
+          <div style="font-size:12.5px;color:#334155;line-height:1.7">운송사 타입도 다른 운송사에게 화물을 위탁하는 경우(화주 역할) 자신의 shipper_code를 제공해야 하므로, 타입에 관계없이 <strong>모든 Tenant가 shipper_code를 보유</strong>해야 함. 초기 설계부터 커버.</div>
+        </div>
+        <div>
+          <div style="font-size:10.5px;font-weight:700;color:#94A3B8;text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px">활용 방식</div>
+          <div style="font-size:12.5px;color:#334155;line-height:1.7">
+            <strong>화주사 타입</strong> — shipper_code를 운송사에게 제공. 연결된 트래킹 조회.<br><br>
+            <strong>운송사 타입</strong> — 평소엔 상대 shipper_code를 입력하는 쪽. 화주 역할 시 자신의 코드 제공.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 결정 4: 엣지 케이스 -->
+    <div style="background:#fff;border:1.5px solid #E2E8F0;border-radius:12px;overflow:hidden">
+      <div style="background:#FCE7F3;padding:12px 18px;display:flex;align-items:center;gap:10px">
+        <div style="background:#DB2777;color:#fff;font-size:11px;font-weight:800;padding:3px 9px;border-radius:5px;white-space:nowrap">논의 4</div>
+        <div style="font-size:13px;font-weight:800;color:#9D174D">엣지 케이스 — 어떤 타입으로 가입해야 하나?</div>
+      </div>
+      <div style="padding:14px 18px">
+        <table style="width:100%;border-collapse:collapse;font-size:12.5px">
+          <thead>
+            <tr style="background:#FDF2F8">
+              <th style="padding:8px 12px;text-align:left;color:#6B21A8;font-weight:700;border-bottom:1.5px solid #F3E8FF;width:35%">케이스</th>
+              <th style="padding:8px 12px;text-align:center;color:#6B21A8;font-weight:700;border-bottom:1.5px solid #F3E8FF;width:20%">타입</th>
+              <th style="padding:8px 12px;text-align:left;color:#6B21A8;font-weight:700;border-bottom:1.5px solid #F3E8FF">이유</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="border-bottom:1px solid #F1F5F9">
+              <td style="padding:9px 12px;color:#334155">화주사인데 자체 운송수단 보유</td>
+              <td style="padding:9px 12px;text-align:center"><span style="background:#DBEAFE;color:#1D4ED8;font-weight:700;font-size:11px;padding:3px 8px;border-radius:4px">운송사</span></td>
+              <td style="padding:9px 12px;color:#64748B">직접 트래킹을 생성·관리하는 주체이므로</td>
+            </tr>
+            <tr style="border-bottom:1px solid #F1F5F9">
+              <td style="padding:9px 12px;color:#334155">쿠팡처럼 자사 창고센터 운영</td>
+              <td style="padding:9px 12px;text-align:center"><span style="background:#DBEAFE;color:#1D4ED8;font-weight:700;font-size:11px;padding:3px 8px;border-radius:4px">운송사</span></td>
+              <td style="padding:9px 12px;color:#64748B">공간형 트래킹을 직접 등록·관리하므로</td>
+            </tr>
+            <tr style="border-bottom:1px solid #F1F5F9">
+              <td style="padding:9px 12px;color:#334155">운송은 외부 위탁, 조회만 필요한 제조사</td>
+              <td style="padding:9px 12px;text-align:center"><span style="background:#DCFCE7;color:#15803D;font-weight:700;font-size:11px;padding:3px 8px;border-radius:4px">화주사</span></td>
+              <td style="padding:9px 12px;color:#64748B">트래킹 생성 없이 자사 화물 조회만 필요</td>
+            </tr>
+            <tr>
+              <td style="padding:9px 12px;color:#334155">3PL — 타사 화물도 운송, 자사 창고도 운영</td>
+              <td style="padding:9px 12px;text-align:center"><span style="background:#DBEAFE;color:#1D4ED8;font-weight:700;font-size:11px;padding:3px 8px;border-radius:4px">운송사</span></td>
+              <td style="padding:9px 12px;color:#64748B">트래킹 직접 생성·관리가 핵심 업무이므로</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══════════════════════════════════
+     §2. 그룹 / 트래킹 / 세그먼트
+══════════════════════════════════ -->
+<section id="group-tracking">
+  <h2>2. 그룹 / 트래킹 / 세그먼트</h2>
+  <p>플랫폼의 운영 핵심은 <strong>트래킹</strong>입니다. 트래킹을 그룹으로 묶어 전체 여정을 관리하고, 필요 시 세그먼트로 경유지를 분리합니다.</p>
+
+  <!-- 계층 흐름 -->
+  <div class="entity-map" style="margin-bottom:20px">
+    <div style="font-size:11px;font-weight:700;color:#94A3B8;text-transform:uppercase;letter-spacing:.08em;margin-bottom:16px">계층 구조</div>
+    <div style="display:flex;align-items:flex-start;gap:0;flex-wrap:wrap">
+
+      <div class="emap-node" style="min-width:110px">
+        <div class="emap-box" style="background:var(--blue-l);color:#1D4ED8;border:2px solid #93C5FD;padding:14px 18px;font-weight:800">
+          회사(Tenant)<br><span style="font-size:10px;font-weight:500">Tenant</span>
+        </div>
+        <div class="emap-sub">독립 조직 단위</div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 8px;margin-top:10px">
+        <span style="font-size:11px;font-weight:700;color:#94A3B8">1:N</span>
+        <div style="height:2px;width:32px;background:#CBD5E1;margin:3px 0"></div>
+        <span style="font-size:9px;color:#94A3B8">포함</span>
+      </div>
+
+      <div class="emap-node" style="min-width:120px">
+        <div class="emap-box" style="background:var(--violet-l);color:#5B21B6;border:2px solid #C4B5FD;padding:14px 18px;font-weight:800">
+          그룹<br><span style="font-size:10px;font-weight:500">논리 묶음 (선택)</span>
+        </div>
+        <div class="emap-sub">2단계 중첩 가능</div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 8px;margin-top:10px">
+        <span style="font-size:11px;font-weight:700;color:#94A3B8">1:N</span>
+        <div style="height:2px;width:32px;background:#CBD5E1;margin:3px 0"></div>
+        <span style="font-size:9px;color:#94A3B8">포함</span>
+      </div>
+
+      <div class="emap-node" style="min-width:130px">
+        <div class="emap-box" style="background:#EFF6FF;color:#1D4ED8;border:2px solid #3B82F6;padding:14px 18px;font-weight:800">
+          트래킹<br><span style="font-size:10px;font-weight:500">핵심 단위</span>
+        </div>
+        <div class="emap-sub">운송형 or 공간형</div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 8px;margin-top:10px">
+        <span style="font-size:11px;font-weight:700;color:#94A3B8">1:N</span>
+        <div style="height:2px;width:32px;background:#CBD5E1;margin:3px 0"></div>
+        <span style="font-size:9px;color:#94A3B8">분할 (선택)</span>
+      </div>
+
+      <div class="emap-node" style="min-width:120px">
+        <div class="emap-box" style="background:var(--green-l);color:#065F46;border:2px solid #6EE7B7;padding:14px 18px;font-weight:800">
+          세그먼트<br><span style="font-size:10px;font-weight:500">경유지 분리 (선택)</span>
+        </div>
+        <div class="emap-sub">경유지별 독립 집계</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- 트래킹 단위 개념 -->
+  <div style="font-size:13px;font-weight:800;color:var(--navy);margin:20px 0 10px">트래킹 단위 — 등록 기준은 운영 방식에 따라 결정됩니다</div>
+  <div class="callout" style="background:#F0F9FF;border-left:4px solid #2563EB;padding:14px 18px;margin-bottom:14px">
+    <strong>트래킹은 "무엇을 1건으로 볼 것인가"를 운영 주체가 정의하는 단위입니다.</strong><br>
+    <span style="font-size:12.5px;color:#334155;line-height:1.8">주문 기준, 배송 기준, 운송 기준, 발주 기준, 공간 기준 등 고객사마다 다른 업무 단위로 등록될 수 있습니다. 플랫폼은 이 모든 경우를 동일한 구조(트래킹)로 수용합니다.</span>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:18px">
+    <div style="background:#EFF6FF;border:1.5px solid #93C5FD;border-radius:8px;padding:10px 12px;text-align:center">
+      <div style="font-size:18px;margin-bottom:4px"></div>
+      <div style="font-size:11.5px;font-weight:800;color:#1D4ED8">주문 기준</div>
+      <div style="font-size:10.5px;color:#64748B;margin-top:3px;line-height:1.5">주문 1건 = 트래킹 1건</div>
+    </div>
+    <div style="background:#F0FDF4;border:1.5px solid #6EE7B7;border-radius:8px;padding:10px 12px;text-align:center">
+      <div style="font-size:18px;margin-bottom:4px"></div>
+      <div style="font-size:11.5px;font-weight:800;color:#065F46">배송 기준</div>
+      <div style="font-size:10.5px;color:#64748B;margin-top:3px;line-height:1.5">배송 1회 = 트래킹 1건</div>
+    </div>
+    <div style="background:#FFF7ED;border:1.5px solid #FED7AA;border-radius:8px;padding:10px 12px;text-align:center">
+      <div style="font-size:18px;margin-bottom:4px"></div>
+      <div style="font-size:11.5px;font-weight:800;color:#92400E">운송 기준</div>
+      <div style="font-size:10.5px;color:#64748B;margin-top:3px;line-height:1.5">운송 단위 = 트래킹 1건</div>
+    </div>
+    <div style="background:#F5F3FF;border:1.5px solid #C4B5FD;border-radius:8px;padding:10px 12px;text-align:center">
+      <div style="font-size:18px;margin-bottom:4px"></div>
+      <div style="font-size:11.5px;font-weight:800;color:#5B21B6">발주 기준</div>
+      <div style="font-size:10.5px;color:#64748B;margin-top:3px;line-height:1.5">발주 1건 = 트래킹 1건</div>
+    </div>
+    <div style="background:#ECFDF5;border:1.5px solid #A7F3D0;border-radius:8px;padding:10px 12px;text-align:center">
+      <div style="font-size:18px;margin-bottom:4px"></div>
+      <div style="font-size:11.5px;font-weight:800;color:#047857">공간 기준</div>
+      <div style="font-size:10.5px;color:#64748B;margin-top:3px;line-height:1.5">고정 공간 = 트래킹 1건</div>
+    </div>
+  </div>
+  <div style="background:#F8FAFF;border:1px solid var(--gray-m);border-radius:8px;padding:12px 16px;font-size:12px;color:#475569;line-height:1.8;margin-bottom:4px">
+    <strong>등록 기준 결정 팁:</strong> 같은 화물이라도 "주문별 추적이 필요하면" 주문 기준, "차량 효율 관리가 목적이면" 운행 기준, "공간 상시 관리가 목적이면" 공간 기준으로 등록합니다. 하나의 Tenant 내에서 여러 기준을 혼용할 수 있습니다.
+  </div>
+
+  <!-- 그룹 = 전체 여정 개념 -->
+  <div style="font-size:13px;font-weight:800;color:var(--navy);margin:20px 0 10px">그룹 — 복합 여정 묶음</div>
+  <div class="callout" style="background:#F5F3FF;border-left:4px solid #7C3AED;padding:14px 18px;margin-bottom:16px">
+    <strong>그룹은 전체 여정을 하나로 묶는 논리 단위입니다.</strong><br>
+    <span style="font-size:12.5px;color:#334155;line-height:1.8">창고 출발 → 국내 차량 → 항만 → 선박 → 목적지 항만 → 국내 차량 → 도착 처럼 여러 운송 수단과 경유지를 하나의 그룹으로 묶어 전체 여정을 한 화면에서 조회합니다.</span>
+  </div>
+
+  <!-- 여정 시각화 -->
+  <div class="tree-wrap" style="font-family:'SFMono-Regular',Consolas,monospace;font-size:12px;line-height:1.8;color:#334155;overflow-x:auto">
+    <div style="font-size:11px;font-weight:700;color:#94A3B8;text-transform:uppercase;letter-spacing:.08em;margin-bottom:12px">멀티모달 전체 여정 예시</div>
+    <div style="display:flex;align-items:center;gap:4px;flex-wrap:wrap;row-gap:8px">
+      <div style="background:#EDE9FE;border:1.5px solid #7C3AED;border-radius:8px;padding:8px 14px;font-size:12px;font-weight:700;color:#5B21B6">그룹: A사 Q2 선적</div>
+      <div style="color:#94A3B8;font-size:16px;padding:0 4px">↓ 포함</div>
+    </div>
+    <div style="margin-left:24px;margin-top:10px;display:flex;flex-wrap:wrap;gap:6px;align-items:center">
+      <div style="background:var(--blue-l);border:1.5px solid #93C5FD;border-radius:6px;padding:6px 12px;font-size:11.5px;color:#1D4ED8"> 창고 트래킹<br><span style="font-weight:500;color:#64748B;font-size:10.5px">SPACE형 · T1W</span></div>
+      <div style="color:#94A3B8;font-size:13px">→</div>
+      <div style="background:var(--green-l);border:1.5px solid #6EE7B7;border-radius:6px;padding:6px 12px;font-size:11.5px;color:#065F46"> 차량 운송<br><span style="font-weight:500;color:#64748B;font-size:10.5px">TRANSPORT형 · T1G</span></div>
+      <div style="color:#94A3B8;font-size:13px">→</div>
+      <div style="background:#FFF7ED;border:1.5px solid #FED7AA;border-radius:6px;padding:6px 12px;font-size:11.5px;color:#92400E"> 선박 운송<br><span style="font-weight:500;color:#64748B;font-size:10.5px">TRANSPORT형 · T1G</span></div>
+      <div style="color:#94A3B8;font-size:13px">→</div>
+      <div style="background:#F0FDF4;border:1.5px solid #86EFAC;border-radius:6px;padding:6px 12px;font-size:11.5px;color:#166534"> 도착 창고<br><span style="font-weight:500;color:#64748B;font-size:10.5px">SPACE형 · T1W</span></div>
+    </div>
+    <div style="margin-left:24px;margin-top:14px">
+      <div style="font-size:11px;color:#94A3B8;margin-bottom:6px">※ 국내 운송에 세그먼트 적용 시</div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px;align-items:center">
+        <div style="background:var(--green-l);border:1.5px solid #6EE7B7;border-radius:6px;padding:5px 10px;font-size:11px;color:#065F46">트래킹: 서울→부산 운행</div>
+        <div style="color:#94A3B8;font-size:13px">→</div>
+        <div style="background:#F0FDF4;border:1px solid #86EFAC;border-radius:5px;padding:4px 9px;font-size:10.5px;color:#166534">세그먼트 1<br>서울→대전</div>
+        <div style="color:#94A3B8;font-size:12px">→</div>
+        <div style="background:#F0FDF4;border:1px solid #86EFAC;border-radius:5px;padding:4px 9px;font-size:10.5px;color:#166534">세그먼트 2<br>대전→부산</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 트래킹 타입 비교 -->
+  <div style="font-size:13px;font-weight:800;color:var(--navy);margin:20px 0 10px">트래킹 타입 비교</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:4px">
+
+    <div style="background:#EFF6FF;border:2px solid #3B82F6;border-radius:12px;overflow:hidden">
+      <div style="background:#1D4ED8;color:#fff;padding:12px 18px;display:flex;align-items:center;gap:10px">
+        
+        <div>
+          <div style="font-size:14px;font-weight:800">운송형 (TRANSPORT)</div>
+          <div style="font-size:11px;opacity:.8">이동하는 운송 단위</div>
+        </div>
+      </div>
+      <div style="padding:14px 18px;display:flex;flex-direction:column;gap:9px">
+        <div style="display:flex;gap:10px;align-items:baseline">
+          <span style="font-size:10px;font-weight:700;color:#1D4ED8;text-transform:uppercase;letter-spacing:.05em;min-width:56px">대상</span>
+          <span style="font-size:12.5px;color:#334155">차량, 선박, 항공기, 컨테이너 등 이동 물체</span>
+        </div>
+        <div style="display:flex;gap:10px;align-items:baseline">
+          <span style="font-size:10px;font-weight:700;color:#1D4ED8;text-transform:uppercase;letter-spacing:.05em;min-width:56px">기간</span>
+          <span style="font-size:12.5px;color:#334155">출발 이벤트 → 도착 이벤트 (종료 있음)</span>
+        </div>
+        <div style="display:flex;gap:10px;align-items:baseline">
+          <span style="font-size:10px;font-weight:700;color:#1D4ED8;text-transform:uppercase;letter-spacing:.05em;min-width:56px">세그먼트</span>
+          <span style="font-size:12.5px;color:#334155">경유지별 구간 분리 가능</span>
+        </div>
+        <div style="display:flex;gap:10px;align-items:baseline">
+          <span style="font-size:10px;font-weight:700;color:#1D4ED8;text-transform:uppercase;letter-spacing:.05em;min-width:56px">디바이스</span>
+          <span style="font-size:12.5px;color:#334155">T1G, S1, T1P, V2P + GW/APP</span>
+        </div>
+      </div>
+    </div>
+
+    <div style="background:#F0FDF4;border:2px solid #059669;border-radius:12px;overflow:hidden">
+      <div style="background:#065F46;color:#fff;padding:12px 18px;display:flex;align-items:center;gap:10px">
+        
+        <div>
+          <div style="font-size:14px;font-weight:800">공간형 (SPACE)</div>
+          <div style="font-size:11px;opacity:.8">고정 공간 상시 모니터링</div>
+        </div>
+      </div>
+      <div style="padding:14px 18px;display:flex;flex-direction:column;gap:9px">
+        <div style="display:flex;gap:10px;align-items:baseline">
+          <span style="font-size:10px;font-weight:700;color:#065F46;text-transform:uppercase;letter-spacing:.05em;min-width:56px">대상</span>
+          <span style="font-size:12.5px;color:#334155">창고, 냉장고, 챔버, 구역 등 고정 공간</span>
+        </div>
+        <div style="display:flex;gap:10px;align-items:baseline">
+          <span style="font-size:10px;font-weight:700;color:#065F46;text-transform:uppercase;letter-spacing:.05em;min-width:56px">기간</span>
+          <span style="font-size:12.5px;color:#334155">상시 모니터링 (종료 없음)</span>
+        </div>
+        <div style="display:flex;gap:10px;align-items:baseline">
+          <span style="font-size:10px;font-weight:700;color:#065F46;text-transform:uppercase;letter-spacing:.05em;min-width:56px">세그먼트</span>
+          <span style="font-size:12.5px;color:#334155">사용 안 함</span>
+        </div>
+        <div style="display:flex;gap:10px;align-items:baseline">
+          <span style="font-size:10px;font-weight:700;color:#065F46;text-transform:uppercase;letter-spacing:.05em;min-width:56px">디바이스</span>
+          <span style="font-size:12.5px;color:#334155">T1W (내부 기판 온도/습도)</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- 트래킹 등록 5단계 입력 -->
+  <div style="font-size:13px;font-weight:800;color:var(--navy);margin:20px 0 10px">트래킹 등록 시 주요 입력</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">
+
+    <div class="rel-card">
+      <div class="rel-card-head" style="background:#F0F9FF;color:#0369A1">
+        <span style="background:#0369A1;color:#fff;border-radius:50%;width:20px;height:20px;display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;flex-shrink:0">1</span>
+        <span>기본 정보</span>
+        <span style="margin-left:auto;background:#FEE2E2;color:#991B1B;padding:1px 7px;border-radius:4px;font-size:10px;font-weight:800">필수</span>
+      </div>
+      <div class="rel-card-body" style="font-size:12px;color:#334155">
+        운송명, 유형(운송형/공간형), 출발지/도착지, 예상 일정
+      </div>
+    </div>
+
+    <div class="rel-card">
+      <div class="rel-card-head" style="background:#F0FDF4;color:#166534">
+        <span style="background:#166534;color:#fff;border-radius:50%;width:20px;height:20px;display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;flex-shrink:0">2</span>
+        <span>측정대상 + 디바이스</span>
+        <span style="margin-left:auto;background:#FEE2E2;color:#991B1B;padding:1px 7px;border-radius:4px;font-size:10px;font-weight:800">필수</span>
+      </div>
+      <div class="rel-card-body" style="font-size:12px;color:#334155">
+        측정대상 타입 선택 → 디바이스 부착 (측정대상:디바이스 = 1:1)
+      </div>
+    </div>
+
+    <div class="rel-card">
+      <div class="rel-card-head" style="background:#FFF7ED;color:#92400E">
+        <span style="background:#92400E;color:#fff;border-radius:50%;width:20px;height:20px;display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;flex-shrink:0">3</span>
+        <span>화주사 연결</span>
+        <span style="margin-left:auto;background:#F1F5F9;color:#64748B;padding:1px 7px;border-radius:4px;font-size:10px;font-weight:800">선택</span>
+      </div>
+      <div class="rel-card-body" style="font-size:12px;color:#334155">
+        shipper_code 입력 → 화주사(회사 B)에 자동 연결
+      </div>
+    </div>
+
+    <div class="rel-card">
+      <div class="rel-card-head" style="background:#F5F3FF;color:#5B21B6">
+        <span style="background:#5B21B6;color:#fff;border-radius:50%;width:20px;height:20px;display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;flex-shrink:0">4</span>
+        <span>그룹 지정</span>
+        <span style="margin-left:auto;background:#F1F5F9;color:#64748B;padding:1px 7px;border-radius:4px;font-size:10px;font-weight:800">선택</span>
+      </div>
+      <div class="rel-card-body" style="font-size:12px;color:#334155">
+        기존 그룹에 포함 또는 새 그룹 생성 (최대 2단계)
+      </div>
+    </div>
+
+    <div class="rel-card" style="grid-column:1/-1">
+      <div class="rel-card-head" style="background:#FFF0F5;color:#9D174D">
+        <span style="background:#9D174D;color:#fff;border-radius:50%;width:20px;height:20px;display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;flex-shrink:0">5</span>
+        <span>알림 프리셋 연결</span>
+        <span style="margin-left:auto;background:#F1F5F9;color:#64748B;padding:1px 7px;border-radius:4px;font-size:10px;font-weight:800">선택</span>
+      </div>
+      <div class="rel-card-body" style="font-size:12px;color:#334155">
+        미리 정의된 알림 프리셋(온도/습도/위치 조건 묶음)을 트래킹에 연결. 복수 프리셋 동시 적용 가능.
+      </div>
+    </div>
+
+  </div>
+
+</section>
+
+<!-- ══════════════════════════════════
+     §3. 측정대상 & 디바이스
+══════════════════════════════════ -->
+<section id="measurement-device">
+  <h2>3. 측정대상 &amp; 디바이스</h2>
+  <p>디바이스는 <strong>측정대상(물리 자산)</strong>을 통해 트래킹에 연결됩니다. 트래킹측정대상은 1:1 / 1:N / N:1 관계가 가능하며, 측정대상디바이스는 항상 <strong>1:1 부착</strong>입니다.</p>
+
+  <!-- 연결 흐름 -->
+  <div class="entity-map" style="margin-bottom:20px">
+    <div style="font-size:11px;font-weight:700;color:#94A3B8;text-transform:uppercase;letter-spacing:.08em;margin-bottom:16px">연결 흐름</div>
+    <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+      <div class="emap-node">
+        <div class="emap-box" style="background:var(--blue-l);color:#1D4ED8;border:1.5px solid #93C5FD;padding:12px 18px">트래킹<br><span style="font-size:10px;font-weight:500">(운송형/공간형)</span></div>
+        <div class="emap-sub">모니터링 단위</div>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:2px;padding:0 6px">
+        <span style="font-size:9.5px;color:#94A3B8;font-weight:700">1:1 / 1:N / N:1</span>
+        <div style="height:2px;width:44px;background:#CBD5E1"></div>
+        <span style="font-size:9.5px;color:#94A3B8">연결</span>
+      </div>
+      <div class="emap-node">
+        <div class="emap-box" style="background:var(--amber-l);color:#92400E;border:1.5px solid #FCD34D;padding:12px 18px">측정대상<br><span style="font-size:10px;font-weight:500">(물리 자산)</span></div>
+        <div class="emap-sub">디바이스 부착 대상</div>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:2px;padding:0 6px">
+        <span style="font-size:9.5px;color:#94A3B8;font-weight:700">1 : 1</span>
+        <div style="height:2px;width:44px;background:#CBD5E1"></div>
+        <span style="font-size:9.5px;color:#94A3B8">부착</span>
+      </div>
+      <div class="emap-node">
+        <div class="emap-box" style="background:var(--violet-l);color:#5B21B6;border:1.5px solid #C4B5FD;padding:12px 18px">디바이스<br><span style="font-size:10px;font-weight:500">(센서 장비)</span></div>
+        <div class="emap-sub">실시간 데이터 수집</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 관계 케이스 3종 -->
+  <div style="font-size:13px;font-weight:800;color:var(--navy);margin:18px 0 10px">트래킹  측정대상 관계 케이스</div>
+  <div class="rel-grid" style="grid-template-columns:1fr 1fr 1fr;margin-bottom:16px">
+    <div class="rel-card">
+      <div class="rel-card-head" style="background:var(--blue-l);color:var(--blue)">
+        <span>1 : 1</span>
+      </div>
+      <div class="rel-card-body" style="font-size:12px;color:#334155;line-height:1.7">
+        <strong>트래킹 1개 → 측정대상 1개</strong><br>
+        트럭 1대에 디바이스 1개 부착. 가장 일반적인 운송형 구조.
+        <div style="margin-top:6px;font-size:11px;color:#94A3B8">예: 차량  T1G</div>
+      </div>
+    </div>
+    <div class="rel-card">
+      <div class="rel-card-head" style="background:var(--green-l);color:var(--green)">
+        <span>1 : N</span>
+      </div>
+      <div class="rel-card-body" style="font-size:12px;color:#334155;line-height:1.7">
+        <strong>트래킹 1개 → 측정대상 복수</strong><br>
+        하나의 운송에 컨테이너·팔레트 여러 개 포함. 각각 디바이스 부착.
+        <div style="margin-top:6px;font-size:11px;color:#94A3B8">예: 선박 운송  컨테이너 ×N</div>
+      </div>
+    </div>
+    <div class="rel-card">
+      <div class="rel-card-head" style="background:var(--amber-l);color:var(--amber)">
+        <span>N : 1</span>
+      </div>
+      <div class="rel-card-body" style="font-size:12px;color:#334155;line-height:1.7">
+        <strong>트래킹 복수 → 측정대상 1개</strong><br>
+        동일 팔레트가 복수 주문 트래킹에 걸쳐 재사용.
+        <div style="margin-top:6px;font-size:11px;color:#94A3B8">예: 팔레트 재사용 시나리오</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 측정대상 16종 -->
+  <div style="display:flex;align-items:center;gap:10px;margin:20px 0 8px;flex-wrap:wrap">
+    <div style="font-size:13px;font-weight:800;color:var(--navy)">측정대상 타입 (16종)</div>
+    <span style="font-size:11px;font-weight:700;background:#FEF3C7;color:#92400E;border:1px solid #FCD34D;border-radius:5px;padding:2px 8px">미정</span>
+  </div>
+  <div class="callout callout-amber" style="margin-bottom:14px">
+    언제든지 추가·수정될 수 있습니다. <strong>중요한 것은 측정대상의 종류가 아니라 핵심 구조입니다.</strong> (트래킹 ↔ 측정대상 ↔ 디바이스 관계)
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px">
+
+    <div style="background:#EFF6FF;border:1.5px solid #BFDBFE;border-radius:10px;padding:14px 16px">
+      <div style="font-size:11px;font-weight:800;color:#1D4ED8;text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px;display:flex;align-items:center;gap:6px">
+         이동형 (TRANSPORT)
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
+        <div style="background:#fff;border:1px solid #DBEAFE;border-radius:6px;padding:7px 10px">
+          <div style="font-size:10px;font-weight:700;color:#2563EB;font-family:monospace;margin-bottom:1px">VEHICLE</div>
+          <div style="font-size:12px;color:#1E3A5F;font-weight:600">차량</div>
+          <div style="font-size:10.5px;color:#64748B">트럭, 밴, 승합차</div>
+        </div>
+        <div style="background:#fff;border:1px solid #DBEAFE;border-radius:6px;padding:7px 10px">
+          <div style="font-size:10px;font-weight:700;color:#2563EB;font-family:monospace;margin-bottom:1px">TRAILER</div>
+          <div style="font-size:12px;color:#1E3A5F;font-weight:600">트레일러</div>
+          <div style="font-size:10.5px;color:#64748B">트레일러 적재함</div>
+        </div>
+        <div style="background:#fff;border:1px solid #DBEAFE;border-radius:6px;padding:7px 10px">
+          <div style="font-size:10px;font-weight:700;color:#2563EB;font-family:monospace;margin-bottom:1px">CONTAINER</div>
+          <div style="font-size:12px;color:#1E3A5F;font-weight:600">컨테이너</div>
+          <div style="font-size:10.5px;color:#64748B">해상/육상 컨테이너</div>
+        </div>
+        <div style="background:#fff;border:1px solid #DBEAFE;border-radius:6px;padding:7px 10px">
+          <div style="font-size:10px;font-weight:700;color:#2563EB;font-family:monospace;margin-bottom:1px">PALLET</div>
+          <div style="font-size:12px;color:#1E3A5F;font-weight:600">팔레트</div>
+          <div style="font-size:10.5px;color:#64748B">물류 팔레트</div>
+        </div>
+        <div style="background:#fff;border:1px solid #DBEAFE;border-radius:6px;padding:7px 10px">
+          <div style="font-size:10px;font-weight:700;color:#2563EB;font-family:monospace;margin-bottom:1px">BOX</div>
+          <div style="font-size:12px;color:#1E3A5F;font-weight:600">박스</div>
+          <div style="font-size:10.5px;color:#64748B">운송 박스·케이스</div>
+        </div>
+        <div style="background:#fff;border:1px solid #DBEAFE;border-radius:6px;padding:7px 10px">
+          <div style="font-size:10px;font-weight:700;color:#2563EB;font-family:monospace;margin-bottom:1px">COOL_BAG</div>
+          <div style="font-size:12px;color:#1E3A5F;font-weight:600">쿨백</div>
+          <div style="font-size:10.5px;color:#64748B">보냉 백·아이스박스</div>
+        </div>
+        <div style="background:#fff;border:1px solid #DBEAFE;border-radius:6px;padding:7px 10px">
+          <div style="font-size:10px;font-weight:700;color:#2563EB;font-family:monospace;margin-bottom:1px">VESSEL</div>
+          <div style="font-size:12px;color:#1E3A5F;font-weight:600">선박</div>
+          <div style="font-size:10.5px;color:#64748B">해상 운송 선박</div>
+        </div>
+        <div style="background:#fff;border:1px solid #DBEAFE;border-radius:6px;padding:7px 10px">
+          <div style="font-size:10px;font-weight:700;color:#2563EB;font-family:monospace;margin-bottom:1px">AIRCRAFT</div>
+          <div style="font-size:12px;color:#1E3A5F;font-weight:600">항공기</div>
+          <div style="font-size:10.5px;color:#64748B">항공 화물기</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="background:#F0FDF4;border:1.5px solid #A7F3D0;border-radius:10px;padding:14px 16px">
+      <div style="font-size:11px;font-weight:800;color:#059669;text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px;display:flex;align-items:center;gap:6px">
+         고정형 (SPACE)
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
+        <div style="background:#fff;border:1px solid #D1FAE5;border-radius:6px;padding:7px 10px">
+          <div style="font-size:10px;font-weight:700;color:#059669;font-family:monospace;margin-bottom:1px">ZONE</div>
+          <div style="font-size:12px;color:#064E3B;font-weight:600">구역</div>
+          <div style="font-size:10.5px;color:#64748B">창고 내 구역</div>
+        </div>
+        <div style="background:#fff;border:1px solid #D1FAE5;border-radius:6px;padding:7px 10px">
+          <div style="font-size:10px;font-weight:700;color:#059669;font-family:monospace;margin-bottom:1px">SPOT</div>
+          <div style="font-size:12px;color:#064E3B;font-weight:600">특정 위치</div>
+          <div style="font-size:10.5px;color:#64748B">포인트 모니터링</div>
+        </div>
+        <div style="background:#fff;border:1px solid #D1FAE5;border-radius:6px;padding:7px 10px">
+          <div style="font-size:10px;font-weight:700;color:#059669;font-family:monospace;margin-bottom:1px">CHAMBER</div>
+          <div style="font-size:12px;color:#064E3B;font-weight:600">챔버</div>
+          <div style="font-size:10.5px;color:#64748B">항온 챔버</div>
+        </div>
+        <div style="background:#fff;border:1px solid #D1FAE5;border-radius:6px;padding:7px 10px">
+          <div style="font-size:10px;font-weight:700;color:#059669;font-family:monospace;margin-bottom:1px">FREEZER</div>
+          <div style="font-size:12px;color:#064E3B;font-weight:600">냉동고</div>
+          <div style="font-size:10.5px;color:#64748B">냉동 보관 유닛</div>
+        </div>
+        <div style="background:#fff;border:1px solid #D1FAE5;border-radius:6px;padding:7px 10px">
+          <div style="font-size:10px;font-weight:700;color:#059669;font-family:monospace;margin-bottom:1px">REFRIGERATOR</div>
+          <div style="font-size:12px;color:#064E3B;font-weight:600">냉장고</div>
+          <div style="font-size:10.5px;color:#64748B">냉장 보관 유닛</div>
+        </div>
+        <div style="background:#fff;border:1px solid #D1FAE5;border-radius:6px;padding:7px 10px">
+          <div style="font-size:10px;font-weight:700;color:#059669;font-family:monospace;margin-bottom:1px">RACK</div>
+          <div style="font-size:12px;color:#064E3B;font-weight:600">랙</div>
+          <div style="font-size:10.5px;color:#64748B">창고 선반 유닛</div>
+        </div>
+        <div style="background:#fff;border:1px solid #D1FAE5;border-radius:6px;padding:7px 10px">
+          <div style="font-size:10px;font-weight:700;color:#059669;font-family:monospace;margin-bottom:1px">TANK</div>
+          <div style="font-size:12px;color:#064E3B;font-weight:600">탱크</div>
+          <div style="font-size:10.5px;color:#64748B">액체·가스 저장</div>
+        </div>
+        <div style="background:#fff;border:1px solid #D1FAE5;border-radius:6px;padding:7px 10px">
+          <div style="font-size:10px;font-weight:700;color:#059669;font-family:monospace;margin-bottom:1px">ROOM</div>
+          <div style="font-size:12px;color:#064E3B;font-weight:600">룸</div>
+          <div style="font-size:10.5px;color:#64748B">보관 방, 격리 공간</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</section>
+
+<!-- ══════════════════════════════════
+     §4. 알림 프리셋
+══════════════════════════════════ -->
+<section id="alert-preset">
+  <h2>4. 알림 프리셋</h2>
+  <p><strong>알림 프리셋</strong>은 반복 사용 가능한 알림 규칙 묶음입니다. 미리 정의해 두고 여러 트래킹에 N:M으로 연결할 수 있습니다. 세그먼트별로 다른 프리셋 적용도 가능합니다.</p>
+
+  <!-- 연결 흐름 -->
+  <div class="entity-map" style="margin-bottom:20px">
+    <div style="font-size:11px;font-weight:700;color:#94A3B8;text-transform:uppercase;letter-spacing:.08em;margin-bottom:16px">알림 프리셋 연결 구조</div>
+    <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+      <div class="emap-node">
+        <div class="emap-box" style="background:var(--blue-l);color:#1D4ED8;border:1.5px solid #93C5FD;padding:12px 18px">트래킹<br><span style="font-size:10px;font-weight:500">(or 세그먼트)</span></div>
+        <div class="emap-sub">적용 단위</div>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:2px;padding:0 6px">
+        <span style="font-size:9.5px;color:#94A3B8;font-weight:700">N : M</span>
+        <div style="height:2px;width:44px;background:#CBD5E1"></div>
+        <span style="font-size:9.5px;color:#94A3B8">연결</span>
+      </div>
+      <div class="emap-node">
+        <div class="emap-box" style="background:#FFF0F5;color:#9D174D;border:1.5px solid #FBCFE8;padding:12px 18px">알림 프리셋<br><span style="font-size:10px;font-weight:500">(규칙 묶음)</span></div>
+        <div class="emap-sub">재사용 가능</div>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:2px;padding:0 6px">
+        <span style="font-size:9.5px;color:#94A3B8;font-weight:700">1 : N</span>
+        <div style="height:2px;width:44px;background:#CBD5E1"></div>
+        <span style="font-size:9.5px;color:#94A3B8">포함</span>
+      </div>
+      <div class="emap-node">
+        <div class="emap-box" style="background:var(--amber-l);color:#92400E;border:1.5px solid #FCD34D;padding:12px 18px">알림 규칙<br><span style="font-size:10px;font-weight:500">(조건 항목)</span></div>
+        <div class="emap-sub">임계값 + 수신자</div>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="callout callout-green" style="margin-top:14px">
+    <strong>세그먼트별 알림 프리셋:</strong> 단일 트래킹 내에서도 경유지(세그먼트)마다 다른 온도 범위를 적용할 수 있습니다. 예: 서울→대전 구간 2~8°C, 대전→부산 구간 -20°C 이하 — 알림 프리셋 별도 연결.
+  </div>
+</section>
+
+<!-- ══════════════════════════════════
+     §7. 권장 구조 및 결정 기준
+══════════════════════════════════ -->
+<section id="decision-guide">
+  <h2>7. 권장 구조 및 결정 기준</h2>
+  <p>그룹 · 세그먼트 · 알림 프리셋을 언제 사용해야 하는지 기준을 정리했습니다.</p>
+
+  <div class="callout callout-green" style="margin:16px 0">
+    <strong>핵심 원칙:</strong> 트래킹이 플랫폼의 핵심 단위입니다. 필요할 때만 그룹으로 묶고, 필요할 때만 세그먼트로 분할하세요. 과도한 중첩(3단계 이상 그룹)은 관리 복잡도를 높이므로 권장하지 않습니다.
+  </div>
+
+  <div class="decision-grid">
+
+    <div class="decision-card">
+      <div class="decision-head" style="background:#EFF6FF;color:#1D4ED8">
+         그룹(Group) 사용 기준
+      </div>
+      <div class="decision-body">
+        <div class="decision-q">여러 트래킹을 하나의 여정으로 묶을 필요가 있나요?</div>
+        <div class="decision-opts">
+          <div class="decision-opt decision-opt-yes">
+            
+            <div>
+              <strong>그룹 사용 권장</strong><br>
+              <span style="color:#374151">멀티모달(창고→차량→선박→항공) 전체 여정을 단일 그룹으로 표현. 복수 트래킹의 통합 대시보드가 필요할 때. 최대 2단계 중첩까지 허용.</span>
+            </div>
+          </div>
+          <div class="decision-opt decision-opt-no">
+            
+            <div>
+              <strong>단일 트래킹으로 충분한 경우</strong><br>
+              <span style="color:#374151">단순 A→B 운송, 단일 창고 모니터링. 그룹 없이 트래킹만으로 운영 권장.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="decision-card">
+      <div class="decision-head" style="background:#CFFAFE;color:#0E7490">
+         세그먼트(Segment) 사용 기준
+      </div>
+      <div class="decision-body">
+        <div class="decision-q">경유지별로 다른 온도 조건이나 알림 프리셋이 필요한가요?</div>
+        <div class="decision-opts">
+          <div class="decision-opt decision-opt-yes">
+            
+            <div>
+              <strong>세그먼트 사용 권장</strong><br>
+              <span style="color:#374151">서울→대전 구간 2~8°C / 대전→부산 구간 −20°C 이하처럼 구간별 온도 기준이 다를 때. 경유지 단위로 독립 알림 프리셋 적용. 주로 국내 운송 복수 경유지 사용.</span>
+            </div>
+          </div>
+          <div class="decision-opt decision-opt-no">
+            
+            <div>
+              <strong>세그먼트 불필요한 경우</strong><br>
+              <span style="color:#374151">단일 온도 조건으로 전 구간 동일 관리. 경유지가 없거나 조건이 동일하면 세그먼트 없이 트래킹 단위로 운영.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="decision-card">
+      <div class="decision-head" style="background:#FCE7F3;color:#9D174D">
+         알림 프리셋 설계 기준
+      </div>
+      <div class="decision-body">
+        <div class="decision-q">동일한 알림 규칙을 여러 트래킹에 반복 적용하나요?</div>
+        <div class="decision-opts">
+          <div class="decision-opt decision-opt-yes">
+            
+            <div>
+              <strong>알림 프리셋 재사용 권장</strong><br>
+              <span style="color:#374151">같은 고객사 화물에 동일한 온도 조건을 반복 적용. 프리셋 1개 생성 후 N개 트래킹에 연결. 변경 시 프리셋 하나만 수정하면 전체 반영.</span>
+            </div>
+          </div>
+          <div class="decision-opt decision-opt-no">
+            
+            <div>
+              <strong>단건 트래킹에 직접 설정</strong><br>
+              <span style="color:#374151">특수 화물 1건에만 적용되는 임시 조건. 재사용 가능성이 없다면 프리셋 생성 없이 트래킹 직접 설정.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="decision-card">
+      <div class="decision-head" style="background:#FEF3C7;color:#92400E">
+         측정대상 연결 구조 선택
+      </div>
+      <div class="decision-body">
+        <div class="decision-q">트래킹과 측정대상의 관계는?</div>
+        <div class="decision-opts">
+          <div class="decision-opt decision-opt-yes">
+            
+            <div>
+              <strong>3가지 연결 패턴</strong><br>
+              <span style="color:#374151">
+                <strong>1:1</strong> — 트럭 1대에 T1G 1개 (일반 차량)<br>
+                <strong>1:N</strong> — 컨테이너 1개에 T1P + V2P 복수 부착<br>
+                <strong>N:1</strong> — 여러 팔레트를 1개 T1G로 통합 모니터링
+              </span>
+            </div>
+          </div>
+          <div class="decision-opt decision-opt-no">
+            
+            <div>
+              <strong>측정대상디바이스는 항상 1:1</strong><br>
+              <span style="color:#374151">측정대상 하나에 디바이스는 반드시 1개만 연결. 디바이스 교체 시 기존 연결 해제 후 신규 디바이스 재연결.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══════════════════════════════════
+     §7. 실고객사 시나리오 — 바이오 콜드체인
+══════════════════════════════════ -->
+<section id="sc-pharma">
+  <h2>5. 시나리오 (참고용)</h2>
+  <hr class="sc-divider">
+
+  <!-- ── 시나리오 1: 바이오 콜드체인 ── -->
+  <div class="sc-card">
+    <div class="sc-head" style="background:linear-gradient(135deg,#6D28D9 0%,#4C1D95 100%)">
+      <div class="sc-emoji"></div>
+      <div class="sc-head-info">
+        <div class="sc-head-title">바이오 콜드체인 — 제약사 A / 바이오운송 B / 유통사 C</div>
+        <div class="sc-head-sub">의약품 제조사(A) → 전문운송사(B) → 유통/배송사(C) 3자 연계 구조. 2~8°C 엄격 관리.</div>
+        <div class="sc-tags">
+          <span class="sc-tag">의약품</span>
+          <span class="sc-tag">콜드체인</span>
+          <span class="sc-tag">운송형 트래킹</span>
+          <span class="sc-tag">V2P 비실시간+프로브</span>
+          <span class="sc-tag">GW/APP 게이트웨이</span>
+          <span class="sc-tag">세그먼트 활용</span>
+        </div>
+      </div>
+    </div>
+    <div class="sc-body">
+
+      <!-- 트래킹 구조 -->
+      <div class="sc-sect">
+        <div class="sc-sect-label">트래킹 계층 구조</div>
+        <div class="sc-tree">
+          <div class="t0">[그룹] 2026-Q2 수도권 의약품 배송 (제약사 A 발주 묶음)</div>
+          <div class="t1">└── [그룹] 5월 4주차 서울 배송</div>
+          <div class="t2">└── [트래킹] 운송장 #KDJ-001 (이동형 운송)</div>
+          <div class="t3">├── 측정대상: 박스 BOX-001 [V2P 비실시간+프로브] ← GW/APP 중계</div>
+          <div class="t3">│&nbsp;&nbsp;&nbsp;&nbsp;── 프로브 온도 (화물 내부)</div>
+          <div class="t3">│&nbsp;&nbsp;&nbsp;&nbsp;── 환경 온도</div>
+          <div class="t3">│&nbsp;&nbsp;&nbsp;&nbsp;── 습도</div>
+          <div class="t3">└── 세그먼트</div>
+          <div class="t4">├── Seg 1: 수원창고 출발 → 강남병원 (45분)</div>
+          <div class="t4">├── Seg 2: 강남병원 → 마포약국 (30분)</div>
+          <div class="t4">└── Seg 3: 마포약국 → 최종 도착</div>
+        </div>
+      </div>
+
+      <!-- 측정 파라미터 -->
+      <div class="sc-sect">
+        <div class="sc-sect-label">측정 파라미터</div>
+        <div class="sc-params">
+          <div class="sc-param">
+            <div class="sc-param-k">프로브 온도</div>
+            <div class="sc-param-v">화물 내부 실측<br><span style="color:#059669">정상: 2~8°C</span></div>
+          </div>
+          <div class="sc-param">
+            <div class="sc-param-k">환경 온도</div>
+            <div class="sc-param-v">박스 외부 환경<br><span style="color:#059669">참조 측정값</span></div>
+          </div>
+          <div class="sc-param">
+            <div class="sc-param-k">습도</div>
+            <div class="sc-param-v">상대 습도<br><span style="color:#059669">정상: 40~70% RH</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 알림 케이스 -->
+      <div class="sc-sect">
+        <div class="sc-sect-label">알림 케이스</div>
+        <table class="sc-alert-table">
+          <thead>
+            <tr>
+              <th style="width:120px">알림 유형</th>
+              <th>조건</th>
+              <th style="width:80px">심각도</th>
+              <th style="width:130px">조치</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>온도 — 주의</td>
+              <td>프로브 온도 2°C 미만 또는 8°C 초과, ±0.5°C 이내</td>
+              <td><span style="background:#FEF3C7;color:#92400E;padding:2px 7px;border-radius:4px;font-size:11px;font-weight:700">주의</span></td>
+              <td>담당자 앱 푸시</td>
+            </tr>
+            <tr>
+              <td>온도 — 위험</td>
+              <td>프로브 온도 ±0.5°C 초과 이탈 지속 (5분 이상)</td>
+              <td><span style="background:#FEE2E2;color:#991B1B;padding:2px 7px;border-radius:4px;font-size:11px;font-weight:700">위험</span></td>
+              <td>SMS + 이메일 즉시 발송</td>
+            </tr>
+            <tr>
+              <td>문열림</td>
+              <td>예상 경유지(강남병원·마포약국) 외 도어 오픈 감지</td>
+              <td><span style="background:#FEF3C7;color:#92400E;padding:2px 7px;border-radius:4px;font-size:11px;font-weight:700">주의</span></td>
+              <td>위치 확인 + 경고</td>
+            </tr>
+            <tr>
+              <td>경로 이탈</td>
+              <td>지정 경유지(강남병원 또는 마포약국) 미방문</td>
+              <td><span style="background:#FEE2E2;color:#991B1B;padding:2px 7px;border-radius:4px;font-size:11px;font-weight:700">위험</span></td>
+              <td>관리자 즉시 알림</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- 고객 관계 구조 -->
+      <div class="sc-sect" style="margin-bottom:0">
+        <div class="sc-sect-label">고객 관계 구조</div>
+        <div class="sc-config">
+          <div class="sc-col">
+            <div class="sc-col-title">제약사 A (화주)</div>
+            <div class="sc-col-item"> 발주 묶음 단위 그룹 관리</div>
+            <div class="sc-col-item"> 전체 콜드체인 가시성 확보</div>
+            <div class="sc-col-item"> 이탈 발생 시 즉시 보고</div>
+          </div>
+          <div class="sc-col">
+            <div class="sc-col-title">용마로지스 (운송사)</div>
+            <div class="sc-col-item"> 트래킹 등록 및 디바이스 연결</div>
+            <div class="sc-col-item"> 세그먼트별 실시간 현황 확인</div>
+            <div class="sc-col-item"> 온도 이탈 대응 주체</div>
+          </div>
+          <div class="sc-col">
+            <div class="sc-col-title">지오영 (유통/배송)</div>
+            <div class="sc-col-item"> 최종 배송 구간 담당</div>
+            <div class="sc-col-item"> 경유지 도착 확인</div>
+            <div class="sc-col-item"> 수령 시점 온도 리포트 수신</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── 시나리오 2: 바이오테크 A ── -->
+  <hr class="sc-divider">
+  <div id="sc-pico" class="sc-card" style="scroll-margin-top:24px">
+    <div class="sc-head" style="background:linear-gradient(135deg,#0E7490 0%,#164E63 100%)">
+      <div class="sc-emoji"></div>
+      <div class="sc-head-info">
+        <div class="sc-head-title">바이오테크 A — 프로브 3종 측정</div>
+        <div class="sc-head-sub">프로브 온도(침투형) + 환경 온도 + 습도 = 3종 동시 측정. 화물 내부와 외부의 온도 격차 실시간 분석.</div>
+        <div class="sc-tags">
+          <span class="sc-tag">프로브 온도</span>
+          <span class="sc-tag">3종 측정</span>
+          <span class="sc-tag">공간형 트래킹</span>
+          <span class="sc-tag">T1P 실시간+프로브</span>
+          <span class="sc-tag">상시 모니터링</span>
+        </div>
+      </div>
+    </div>
+    <div class="sc-body">
+
+      <!-- 트래킹 구조 -->
+      <div class="sc-sect">
+        <div class="sc-sect-label">트래킹 계층 구조</div>
+        <div class="sc-tree">
+          <div class="t0">[그룹] 바이오테크 A 프로브 모니터링 — 2026년 Q2</div>
+          <div class="t1">└── [트래킹] 물류센터 냉장구역 A (고정형 공간)</div>
+          <div class="t2">├── 측정대상: 구역 ZONE-A01 [T1P 실시간+프로브]</div>
+          <div class="t3">── 프로브 온도 채널 1 (화물 내부 실측)</div>
+          <div class="t3">── 환경 온도 (구역 공기 온도)</div>
+          <div class="t3">── 습도</div>
+          <div class="t2">└── 세그먼트 없음 (상시 모니터링)</div>
+        </div>
+      </div>
+
+      <!-- 측정 파라미터 -->
+      <div class="sc-sect">
+        <div class="sc-sect-label">측정 파라미터</div>
+        <div class="sc-params">
+          <div class="sc-param">
+            <div class="sc-param-k">프로브 온도 (침투형)</div>
+            <div class="sc-param-v">화물 내부 실측<br><span style="color:#0891B2">침투형 프로브 연결</span></div>
+          </div>
+          <div class="sc-param">
+            <div class="sc-param-k">환경 온도</div>
+            <div class="sc-param-v">공간 내 공기 온도<br><span style="color:#059669">외부 환경 기준</span></div>
+          </div>
+          <div class="sc-param">
+            <div class="sc-param-k">습도</div>
+            <div class="sc-param-v">상대 습도 (%RH)<br><span style="color:#059669">결로 방지 관리</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 알림 케이스 -->
+      <div class="sc-sect">
+        <div class="sc-sect-label">알림 케이스</div>
+        <table class="sc-alert-table">
+          <thead>
+            <tr>
+              <th style="width:150px">알림 유형</th>
+              <th>조건</th>
+              <th style="width:80px">심각도</th>
+              <th style="width:130px">조치</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>프로브-환경 격차 이상</td>
+              <td>프로브 온도 - 환경 온도 격차 > 3°C 이상 지속</td>
+              <td><span style="background:#FEF3C7;color:#92400E;padding:2px 7px;border-radius:4px;font-size:11px;font-weight:700">주의</span></td>
+              <td>냉각 시스템 점검</td>
+            </tr>
+            <tr>
+              <td>화물 내부 온도 이탈</td>
+              <td>프로브 온도 설정 범위 벗어남</td>
+              <td><span style="background:#FEE2E2;color:#991B1B;padding:2px 7px;border-radius:4px;font-size:11px;font-weight:700">위험</span></td>
+              <td>즉시 SMS + 관리자 호출</td>
+            </tr>
+            <tr>
+              <td>습도 임계 초과</td>
+              <td>상대 습도 > 80% RH 지속 (10분 이상)</td>
+              <td><span style="background:#FEF3C7;color:#92400E;padding:2px 7px;border-radius:4px;font-size:11px;font-weight:700">주의</span></td>
+              <td>제습 장비 가동 알림</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout callout-blue" style="margin-top:0">
+        <strong>바이오테크 A 특징:</strong> 프로브 온도와 환경 온도를 동시 측정하여 화물 내부와 공간 간의 <strong>온도 격차 이상 징후</strong>를 조기 감지합니다. 단순 임계값 알림을 넘어 격차 패턴 분석이 핵심입니다.
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── 시나리오 3: 특수소재 제조사 A 국제운송 ── -->
+  <hr class="sc-divider">
+  <div id="sc-corning" class="sc-card" style="scroll-margin-top:24px">
+    <div class="sc-head" style="background:linear-gradient(135deg,#1D4ED8 0%,#1e3a8a 100%)">
+      <div class="sc-emoji"></div>
+      <div class="sc-head-info">
+        <div class="sc-head-title">국제운송 — 특수소재 제조사 A 아태지역 선적</div>
+        <div class="sc-head-sub">특수 소재 국제 운송. 온도 + 습도 + 조도 + 충격 — 4종 측정. 인천 → 상하이 → 싱가포르 → LA 멀티 세그먼트.</div>
+        <div class="sc-tags">
+          <span class="sc-tag">국제운송</span>
+          <span class="sc-tag">FCL 컨테이너</span>
+          <span class="sc-tag">4종 측정</span>
+          <span class="sc-tag">T1G 다회용</span>
+          <span class="sc-tag">멀티 세그먼트</span>
+        </div>
+      </div>
+    </div>
+    <div class="sc-body">
+
+      <!-- 트래킹 구조 -->
+      <div class="sc-sect">
+        <div class="sc-sect-label">트래킹 계층 구조</div>
+        <div class="sc-tree">
+          <div class="t0">[그룹] A사 2026-Q2 아태지역 선적</div>
+          <div class="t1">└── [트래킹] FCL 운송 #CN-20260501 (이동형)</div>
+          <div class="t2">├── 측정대상: 컨테이너 CNXU-7891234 [T1G 다회용]</div>
+          <div class="t3">── 온도 (-5~25°C 유지)</div>
+          <div class="t3">── 습도 (40~60% RH 유지)</div>
+          <div class="t3">── 조도 (빛 노출 감지)</div>
+          <div class="t3">── 충격 (가속도, G값)</div>
+          <div class="t2">└── 세그먼트</div>
+          <div class="t3">├── Seg 1: 인천항 출항 → 상하이 경유 (7일)</div>
+          <div class="t3">├── Seg 2: 상하이 → 싱가포르 경유 (5일)</div>
+          <div class="t3">└── Seg 3: 싱가포르 → LA 도착 (14일)</div>
+        </div>
+      </div>
+
+      <!-- 측정 파라미터 -->
+      <div class="sc-sect">
+        <div class="sc-sect-label">측정 파라미터 (4종)</div>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px">
+          <div class="sc-param">
+            <div class="sc-param-k">온도</div>
+            <div class="sc-param-v">-5 ~ 25°C<br><span style="color:#059669">광섬유 보호</span></div>
+          </div>
+          <div class="sc-param">
+            <div class="sc-param-k">습도</div>
+            <div class="sc-param-v">40 ~ 60% RH<br><span style="color:#059669">결로 방지</span></div>
+          </div>
+          <div class="sc-param">
+            <div class="sc-param-k">조도</div>
+            <div class="sc-param-v">빛 노출 감지<br><span style="color:#DC2626">밀봉 파손 의심</span></div>
+          </div>
+          <div class="sc-param">
+            <div class="sc-param-k">충격</div>
+            <div class="sc-param-v">가속도 임계값<br><span style="color:#DC2626">파손 리스크</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 알림 케이스 -->
+      <div class="sc-sect">
+        <div class="sc-sect-label">알림 케이스</div>
+        <table class="sc-alert-table">
+          <thead>
+            <tr>
+              <th style="width:120px">알림 유형</th>
+              <th>조건</th>
+              <th style="width:80px">심각도</th>
+              <th style="width:150px">조치</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>충격 감지</td>
+              <td>가속도 임계값 초과 (광섬유 파손 리스크 기준 G값)</td>
+              <td><span style="background:#FEE2E2;color:#991B1B;padding:2px 7px;border-radius:4px;font-size:11px;font-weight:700">위험</span></td>
+              <td>현장 검수 요청, 보험사 통보</td>
+            </tr>
+            <tr>
+              <td>조도 이상</td>
+              <td>컨테이너 내부 빛 노출 감지 (밀봉 파손 의심)</td>
+              <td><span style="background:#FEE2E2;color:#991B1B;padding:2px 7px;border-radius:4px;font-size:11px;font-weight:700">위험</span></td>
+              <td>경유지 입항 시 즉시 검사</td>
+            </tr>
+            <tr>
+              <td>온도 이탈</td>
+              <td>-5°C 미만 또는 25°C 초과</td>
+              <td><span style="background:#FEF3C7;color:#92400E;padding:2px 7px;border-radius:4px;font-size:11px;font-weight:700">주의</span></td>
+              <td>경유지 검토 및 환경 조치</td>
+            </tr>
+            <tr>
+              <td>습도 이탈</td>
+              <td>40% RH 미만 또는 60% RH 초과</td>
+              <td><span style="background:#FEF3C7;color:#92400E;padding:2px 7px;border-radius:4px;font-size:11px;font-weight:700">주의</span></td>
+              <td>건조제/제습제 교체 알림</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- 세그먼트 활용 -->
+      <div class="sc-sect" style="margin-bottom:0">
+        <div class="sc-sect-label">세그먼트별 구간 현황</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
+          <div class="sc-col">
+            <div class="sc-col-title">Seg 1 — 인천→상하이</div>
+            <div class="sc-col-item"> 기간: 7일</div>
+            <div class="sc-col-item"> 한국 출항 후 황해 통과</div>
+            <div class="sc-col-item"> 초기 충격 집중 모니터링</div>
+          </div>
+          <div class="sc-col">
+            <div class="sc-col-title">Seg 2 — 상하이→싱가포르</div>
+            <div class="sc-col-item"> 기간: 5일</div>
+            <div class="sc-col-item"> 환적 과정 충격 집중</div>
+            <div class="sc-col-item"> 열대 기후 습도 관리</div>
+          </div>
+          <div class="sc-col">
+            <div class="sc-col-title">Seg 3 — 싱가포르→LA</div>
+            <div class="sc-col-item"> 기간: 14일 (최장)</div>
+            <div class="sc-col-item"> 태평양 횡단, 온도 변화 관리</div>
+            <div class="sc-col-item"> 최종 도착 리포트 생성</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── 시나리오 4: 대형 물류센터 ── -->
+  <hr class="sc-divider">
+  <div id="sc-coupang" class="sc-card" style="scroll-margin-top:24px">
+    <div class="sc-head" style="background:linear-gradient(135deg,#065F46 0%,#064E3B 100%)">
+      <div class="sc-emoji"></div>
+      <div class="sc-head-info">
+        <div class="sc-head-title">창고 공간 모니터링 — 대형 물류센터 A동</div>
+        <div class="sc-head-sub">이동 없음. 냉동구역 및 입출고 게이트 상시 고정 모니터링. 세그먼트 없이 구역별 독립 트래킹.</div>
+        <div class="sc-tags">
+          <span class="sc-tag">창고 모니터링</span>
+          <span class="sc-tag">공간형 트래킹</span>
+          <span class="sc-tag">T1W 창고전용</span>
+          <span class="sc-tag">상시 모니터링</span>
+          <span class="sc-tag">다중 구역</span>
+        </div>
+      </div>
+    </div>
+    <div class="sc-body">
+
+      <!-- 트래킹 구조 -->
+      <div class="sc-sect">
+        <div class="sc-sect-label">트래킹 계층 구조</div>
+        <div class="sc-tree">
+          <div class="t0">[그룹] 대형 물류센터 A동</div>
+          <div class="t1">├── [트래킹] 냉동구역 1호 (고정형 공간)</div>
+          <div class="t2">│&nbsp;&nbsp;&nbsp;&nbsp;└── 측정대상: 구역 ZONE-F01 [T1W]</div>
+          <div class="t3">── 온도 (-18°C 이하)</div>
+          <div class="t3">── 습도</div>
+          <div class="t3">── 문열림 감지</div>
+          <div class="t1">├── [트래킹] 냉동구역 2호 (고정형 공간)</div>
+          <div class="t2">│&nbsp;&nbsp;&nbsp;&nbsp;└── 측정대상: 구역 ZONE-F02 [T1W]</div>
+          <div class="t3">── 온도, 습도, 문열림</div>
+          <div class="t1">└── [트래킹] 입출고 게이트 (고정형 공간)</div>
+          <div class="t2">└── 측정대상: 위치 SPOT-GATE [T1W]</div>
+          <div class="t3">── 온도, 문열림 감지</div>
+        </div>
+      </div>
+
+      <!-- 측정 파라미터 -->
+      <div class="sc-sect">
+        <div class="sc-sect-label">측정 파라미터</div>
+        <div class="sc-params">
+          <div class="sc-param">
+            <div class="sc-param-k">온도</div>
+            <div class="sc-param-v">-18°C 이하 유지<br><span style="color:#059669">냉동 기준 엄격 관리</span></div>
+          </div>
+          <div class="sc-param">
+            <div class="sc-param-k">습도</div>
+            <div class="sc-param-v">결빙 방지 범위<br><span style="color:#059669">구역별 독립 설정</span></div>
+          </div>
+          <div class="sc-param">
+            <div class="sc-param-k">문열림</div>
+            <div class="sc-param-v">도어 개방 감지<br><span style="color:#DC2626">비업무 시간대 알림</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 알림 케이스 -->
+      <div class="sc-sect">
+        <div class="sc-sect-label">알림 케이스</div>
+        <table class="sc-alert-table">
+          <thead>
+            <tr>
+              <th style="width:130px">알림 유형</th>
+              <th>조건</th>
+              <th style="width:80px">심각도</th>
+              <th style="width:140px">조치</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>냉동 온도 이탈</td>
+              <td>구역 온도 -18°C 초과 (냉동 기준 이탈)</td>
+              <td><span style="background:#FEE2E2;color:#991B1B;padding:2px 7px;border-radius:4px;font-size:11px;font-weight:700">위험</span></td>
+              <td>냉동 시스템 긴급 점검</td>
+            </tr>
+            <tr>
+              <td>문열림 — 비업무</td>
+              <td>오후 10시 ~ 오전 6시 도어 개방 감지</td>
+              <td><span style="background:#FEE2E2;color:#991B1B;padding:2px 7px;border-radius:4px;font-size:11px;font-weight:700">위험</span></td>
+              <td>보안팀 즉시 호출</td>
+            </tr>
+            <tr>
+              <td>문열림 — 장시간</td>
+              <td>도어 개방 5분 이상 지속 (업무 시간 내 포함)</td>
+              <td><span style="background:#FEF3C7;color:#92400E;padding:2px 7px;border-radius:4px;font-size:11px;font-weight:700">주의</span></td>
+              <td>현장 담당자 앱 알림</td>
+            </tr>
+            <tr>
+              <td>습도 이탈</td>
+              <td>결빙 방지 범위 이탈 (습도 설정 범위 초과)</td>
+              <td><span style="background:#FEF3C7;color:#92400E;padding:2px 7px;border-radius:4px;font-size:11px;font-weight:700">주의</span></td>
+              <td>제습 장비 점검 알림</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- 구역별 독립 운용 -->
+      <div class="sc-sect" style="margin-bottom:0">
+        <div class="sc-sect-label">구역별 독립 운용 특징</div>
+        <div class="sc-config">
+          <div class="sc-col">
+            <div class="sc-col-title">냉동구역 1·2호</div>
+            <div class="sc-col-item"> 각각 독립 트래킹으로 관리</div>
+            <div class="sc-col-item"> 구역별 알림 프리셋 독립 설정</div>
+            <div class="sc-col-item"> 동일 그룹으로 묶어 통합 대시보드 지원</div>
+          </div>
+          <div class="sc-col">
+            <div class="sc-col-title">입출고 게이트</div>
+            <div class="sc-col-item"> 빈번한 문열림 특성 반영한 알림 설정</div>
+            <div class="sc-col-item"> 업무 시간대별 차등 알림 규칙</div>
+            <div class="sc-col-item"> 냉동구역과 동일 그룹 내 관리</div>
+          </div>
+          <div class="sc-col">
+            <div class="sc-col-title">세그먼트 없음</div>
+            <div class="sc-col-item"> 공간형 트래킹 — 이동 없음</div>
+            <div class="sc-col-item"> 상시 연속 모니터링</div>
+            <div class="sc-col-item"> 설치 후 종료 없이 계속 운용</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</section>
+
+</div><!-- /#main -->
+
+<script>
+// 모바일 사이드바 토글
+const mobToggle = document.getElementById('mob-toggle');
+const overlay   = document.getElementById('sidebar-overlay');
+function openSidebar()  { document.body.classList.add('sidebar-open'); }
+function closeSidebar() { document.body.classList.remove('sidebar-open'); }
+mobToggle.addEventListener('click', () => {
+  document.body.classList.contains('sidebar-open') ? closeSidebar() : openSidebar();
+});
+overlay.addEventListener('click', closeSidebar);
+// 링크 클릭 시 사이드바 닫기 (모바일)
+document.querySelectorAll('#sidebar nav a').forEach(a => {
+  a.addEventListener('click', () => { if(window.innerWidth <= 767) closeSidebar(); });
+});
+
+// Active sidebar link on scroll
+const sections = document.querySelectorAll('section[id], div[id^="sc-"]');
+const links = document.querySelectorAll('#sidebar nav a');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      links.forEach(l => l.classList.remove('active'));
+      const active = document.querySelector('#sidebar nav a[href="#' + e.target.id + '"]');
+      if (active) active.classList.add('active');
+    }
+  });
+}, {threshold: 0.2, rootMargin: '-60px 0px -60% 0px'});
+sections.forEach(s => observer.observe(s));
+</script>
+
+</div><!-- /view-plan -->
+</div><!-- /main -->
+</body>
+</html>
