@@ -341,7 +341,7 @@ p{line-height:1.75;color:#334155;margin-bottom:8px;font-size:13px}
         </div>
       </div>
       <div class="rel-card-body" style="font-size:12.5px;color:#334155;line-height:1.7">
-        여러 트래킹(또는 그룹)을 묶는 <strong>운영 단위</strong>. 최대 2단계 중첩. 멀티모달 전체 여정을 하나로 표현할 때 사용합니다.
+        <strong>선택적</strong> 논리 묶음 단위. 트래킹은 회사에 직접 귀속되며, 여러 트래킹을 함께 관리할 필요가 있을 때만 그룹을 생성합니다. 최대 2단계 중첩. 멀티모달 전체 여정을 단일 단위로 표현할 때 사용합니다.
       </div>
     </div>
 
@@ -537,15 +537,23 @@ p{line-height:1.75;color:#334155;margin-bottom:8px;font-size:13px}
     <!-- 핵심 계층 흐름 -->
     <div style="font-size:11px;font-weight:700;color:#94A3B8;text-transform:uppercase;letter-spacing:.08em;margin-bottom:20px">핵심 계층 흐름</div>
 
-    <!-- Row 1: 회사(Tenant) → Group → Tracking → Segment -->
+    <!-- Row 1: 회사(Tenant) → Tracking → Segment (기본 직결 흐름) -->
     <div class="erd-row">
       <div class="erd-box" style="background:#EDE9FE;color:#5B21B6;border:1.5px solid #C4B5FD">회사(Tenant)<br><span style="font-size:10px;font-weight:500;opacity:.75">Tenant</span></div>
       <div class="erd-rel"><span>1 : N</span><div class="erd-line"></div></div>
-      <div class="erd-box" style="background:#F5F3FF;color:#6D28D9;border:1.5px solid #DDD6FE">그룹<br><span style="font-size:10px;font-weight:500;opacity:.75">최대 2단계</span></div>
-      <div class="erd-rel"><span>1 : N</span><div class="erd-line"></div></div>
-      <div class="erd-box" style="background:#DBEAFE;color:#1D4ED8;border:2px solid #3B82F6;font-weight:800">트래킹 <br><span style="font-size:10px;font-weight:500;opacity:.75">운송형 / 공간형</span></div>
+      <div class="erd-box" style="background:#DBEAFE;color:#1D4ED8;border:2px solid #3B82F6;font-weight:800">트래킹<br><span style="font-size:10px;font-weight:500;opacity:.75">운송형 / 공간형</span></div>
       <div class="erd-rel"><span>1 : N</span><div class="erd-line"></div></div>
       <div class="erd-box" style="background:#CFFAFE;color:#0E7490;border:1.5px solid #67E8F9">세그먼트<br><span style="font-size:10px;font-weight:500;opacity:.75">경유지 분리 (선택)</span></div>
+    </div>
+
+    <!-- 그룹: 선택적 묶음 레이어 -->
+    <div style="margin-top:10px;margin-bottom:4px">
+      <div style="display:inline-flex;align-items:center;gap:12px;border:1.5px dashed #A78BFA;border-radius:8px;padding:8px 16px;background:#FAFAFF">
+        <div style="font-size:11.5px;font-weight:800;color:#6D28D9">[선택] 그룹</div>
+        <div style="width:1px;height:16px;background:#DDD6FE"></div>
+        <div style="font-size:11px;color:#64748B">트래킹 여러 개를 논리적으로 묶을 때 사용 · 최대 2단계 중첩</div>
+        <div style="font-size:10.5px;color:#A78BFA;font-weight:600">회사 → 그룹 → 트래킹(들)</div>
+      </div>
     </div>
 
     <!-- vertical connector from Tracking down -->
@@ -608,13 +616,13 @@ p{line-height:1.75;color:#334155;margin-bottom:8px;font-size:13px}
   <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:16px">
     <div style="background:#F8FAFF;border:1px solid var(--gray-m);border-radius:8px;padding:12px 14px;text-align:center">
       <div style="font-size:18px;margin-bottom:4px"></div>
-      <div style="font-size:11px;font-weight:800;color:var(--navy)">회사(Tenant) → 그룹</div>
-      <div style="font-size:10.5px;color:#64748B;margin-top:3px">1 : N</div>
+      <div style="font-size:11px;font-weight:800;color:var(--navy)">회사(Tenant) → 트래킹</div>
+      <div style="font-size:10.5px;color:#64748B;margin-top:3px">1 : N (직접 귀속)</div>
     </div>
-    <div style="background:#F8FAFF;border:1px solid var(--gray-m);border-radius:8px;padding:12px 14px;text-align:center">
+    <div style="background:#FAFAFF;border:1.5px dashed #A78BFA;border-radius:8px;padding:12px 14px;text-align:center">
       <div style="font-size:18px;margin-bottom:4px"></div>
-      <div style="font-size:11px;font-weight:800;color:var(--navy)">그룹 → 트래킹</div>
-      <div style="font-size:10.5px;color:#64748B;margin-top:3px">1 : N</div>
+      <div style="font-size:11px;font-weight:800;color:#6D28D9">그룹 → 트래킹 <span style="font-size:10px;font-weight:500;color:#A78BFA">(선택)</span></div>
+      <div style="font-size:10.5px;color:#64748B;margin-top:3px">논리적 묶음 · 최대 2단계</div>
     </div>
     <div style="background:#F8FAFF;border:1px solid var(--gray-m);border-radius:8px;padding:12px 14px;text-align:center">
       <div style="font-size:18px;margin-bottom:4px"></div>
@@ -864,12 +872,14 @@ p{line-height:1.75;color:#334155;margin-bottom:8px;font-size:13px}
 ══════════════════════════════════ -->
 <section id="group-tracking">
   <h2>2. 그룹 / 트래킹 / 세그먼트</h2>
-  <p>플랫폼의 운영 핵심은 <strong>트래킹</strong>입니다. 트래킹을 그룹으로 묶어 전체 여정을 관리하고, 필요 시 세그먼트로 경유지를 분리합니다.</p>
+  <p>플랫폼의 운영 핵심은 <strong>트래킹</strong>입니다. 트래킹은 회사에 직접 귀속되는 기본 단위이며, 필요 시 그룹으로 묶거나 세그먼트로 경유지를 분리합니다.</p>
 
   <!-- 계층 흐름 -->
   <div class="entity-map" style="margin-bottom:20px">
     <div style="font-size:11px;font-weight:700;color:#94A3B8;text-transform:uppercase;letter-spacing:.08em;margin-bottom:16px">계층 구조</div>
-    <div style="display:flex;align-items:flex-start;gap:0;flex-wrap:wrap">
+
+    <!-- 메인 흐름: 회사 → 트래킹 → 세그먼트 -->
+    <div style="display:flex;align-items:flex-start;gap:0;flex-wrap:wrap;margin-bottom:12px">
 
       <div class="emap-node" style="min-width:110px">
         <div class="emap-box" style="background:var(--blue-l);color:#1D4ED8;border:2px solid #93C5FD;padding:14px 18px;font-weight:800">
@@ -879,22 +889,9 @@ p{line-height:1.75;color:#334155;margin-bottom:8px;font-size:13px}
       </div>
 
       <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 8px;margin-top:10px">
-        <span style="font-size:11px;font-weight:700;color:#94A3B8">1:N</span>
-        <div style="height:2px;width:32px;background:#CBD5E1;margin:3px 0"></div>
-        <span style="font-size:9px;color:#94A3B8">포함</span>
-      </div>
-
-      <div class="emap-node" style="min-width:120px">
-        <div class="emap-box" style="background:var(--violet-l);color:#5B21B6;border:2px solid #C4B5FD;padding:14px 18px;font-weight:800">
-          그룹<br><span style="font-size:10px;font-weight:500">논리 묶음 (선택)</span>
-        </div>
-        <div class="emap-sub">2단계 중첩 가능</div>
-      </div>
-
-      <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 8px;margin-top:10px">
-        <span style="font-size:11px;font-weight:700;color:#94A3B8">1:N</span>
-        <div style="height:2px;width:32px;background:#CBD5E1;margin:3px 0"></div>
-        <span style="font-size:9px;color:#94A3B8">포함</span>
+        <span style="font-size:11px;font-weight:700;color:#3B82F6">1:N</span>
+        <div style="height:2px;width:32px;background:#3B82F6;margin:3px 0"></div>
+        <span style="font-size:9px;color:#3B82F6;font-weight:600">직접 귀속</span>
       </div>
 
       <div class="emap-node" style="min-width:130px">
@@ -918,6 +915,20 @@ p{line-height:1.75;color:#334155;margin-bottom:8px;font-size:13px}
       </div>
 
     </div>
+
+    <!-- 그룹: 선택 레이어 -->
+    <div style="display:inline-flex;align-items:center;gap:14px;border:1.5px dashed #A78BFA;border-radius:10px;padding:10px 18px;background:#FAFAFF;margin-top:4px">
+      <div>
+        <div style="font-size:11.5px;font-weight:800;color:#6D28D9">[선택] 그룹</div>
+        <div style="font-size:10px;color:#A78BFA;margin-top:1px">최대 2단계 중첩</div>
+      </div>
+      <div style="width:1px;height:28px;background:#DDD6FE"></div>
+      <div style="font-size:11px;color:#475569;line-height:1.6">
+        트래킹 여러 개를 논리적으로 묶을 때 생성<br>
+        <span style="color:#94A3B8;font-size:10.5px">회사 → 그룹 → 트래킹(들) · 멀티모달 전체 여정 등</span>
+      </div>
+    </div>
+
   </div>
 
   <!-- 트래킹 단위 개념 -->
