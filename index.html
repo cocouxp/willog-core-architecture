@@ -369,7 +369,8 @@ p{line-height:1.75;color:#334155;margin-bottom:8px;font-size:13px}
         </div>
       </div>
       <div class="rel-card-body" style="font-size:12.5px;color:#334155;line-height:1.7">
-        여러 트래킹을 하나의 여정으로 묶어 <strong>통합 조회·관리</strong>하는 선택적 단위. 트래킹은 회사에 직접 귀속되며, 그룹은 필요할 때만 생성합니다. 최대 2단계 중첩. 멀티모달 전체 여정(창고 → 차량 → 선박 등)을 하나의 트래킹 묶음으로 표현할 때 사용합니다.
+        각자 독립적으로 존재해야 하는 트래킹 여러 개를 <strong>하나의 업무 단위로 묶어 통합 조회·관리</strong>하는 선택적 단위. 최대 2단계 중첩. order_no가 같아야 하는 제약이 없으며, 운영자가 필요에 따라 자유롭게 구성합니다.<br><br>
+        <strong>Segment와의 차이:</strong> 하나의 여정을 순서대로 구간 분리할 때는 Segment 사용. 독립적인 트래킹 여러 개를 묶을 때는 Group 사용.
       </div>
     </div>
 
@@ -649,8 +650,8 @@ p{line-height:1.75;color:#334155;margin-bottom:8px;font-size:13px}
   <!-- 3. Group - pink dashed -->
   <rect x="642" y="85" width="162" height="95" rx="14" fill="#FFF0F5" stroke="#F472B6" stroke-width="2" stroke-dasharray="7,3" filter="url(#shadow)"/>
   <text x="723" y="123" text-anchor="middle" font-size="16" font-weight="800" fill="#BE185D">Group</text>
-  <text x="723" y="143" text-anchor="middle" font-size="11.5" fill="#9D174D">최대 2단계</text>
-  <text x="723" y="160" text-anchor="middle" font-size="11.5" fill="#9D174D">(선택)</text>
+  <text x="723" y="143" text-anchor="middle" font-size="11.5" fill="#9D174D">독립 트래킹 묶음</text>
+  <text x="723" y="160" text-anchor="middle" font-size="11.5" fill="#9D174D">업무 단위 (선택)</text>
 
   <!-- 4. Segment - teal dashed -->
   <rect x="168" y="268" width="168" height="92" rx="14" fill="#ECFDF5" stroke="#34D399" stroke-width="2" stroke-dasharray="7,3" filter="url(#shadow)"/>
@@ -1371,30 +1372,29 @@ p{line-height:1.75;color:#334155;margin-bottom:8px;font-size:13px}
     <strong>등록 기준 결정 팁:</strong> 같은 화물이라도 "주문별 추적이 필요하면" 주문 기준, "차량 효율 관리가 목적이면" 운행 기준, "공간 상시 관리가 목적이면" 공간 기준으로 등록합니다. 하나의 Tenant 내에서 여러 기준을 혼용할 수 있습니다.
   </div>
 
-  <!-- 그룹 = 전체 여정 개념 -->
-  <div style="font-size:13px;font-weight:800;color:var(--navy);margin:20px 0 10px">그룹 — 복합 여정 묶음</div>
+  <!-- 그룹 = 업무 단위 묶음 개념 -->
+  <div style="font-size:13px;font-weight:800;color:var(--navy);margin:20px 0 10px">그룹 — 독립 트래킹들의 업무 단위 묶음</div>
   <div class="callout" style="background:#F5F3FF;border-left:4px solid #7C3AED;padding:14px 18px;margin-bottom:12px">
-    <strong>그룹은 전체 여정을 하나로 묶는 논리 단위입니다.</strong><br>
-    <span style="font-size:12.5px;color:#334155;line-height:1.8">창고 출발 → 국내 차량 → 항만 → 선박 → 목적지 항만 → 국내 차량 → 도착 처럼 여러 운송 수단과 경유지를 하나의 그룹으로 묶어 전체 여정을 한 화면에서 조회합니다.</span>
+    <strong>그룹은 각자 독립적으로 존재하는 트래킹 여러 개를 하나의 업무 단위로 묶는 논리 단위입니다.</strong><br>
+    <span style="font-size:12.5px;color:#334155;line-height:1.8">order_no가 같아야 하는 제약이 없습니다. 운영자가 계약·프로젝트·고객사 등 업무 기준으로 자유롭게 구성합니다.</span>
   </div>
 
-  <!-- 주문 앵커 개념 (v1.1 추가) -->
+  <!-- 그룹 vs 세그먼트 구분 -->
   <div style="background:#FFFBEB;border:1.5px solid #FCD34D;border-radius:10px;padding:14px 18px;margin-bottom:16px">
-    <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
-      <div style="background:#D97706;color:#fff;font-size:10.5px;font-weight:800;padding:2px 9px;border-radius:4px">주문 앵커 개념</div>
-      <div style="font-size:12.5px;font-weight:700;color:#92400E">그룹 생성의 기준점 — <code style="font-size:11.5px;background:#FEF3C7;padding:1px 6px;border-radius:3px">order_no</code> 필드</div>
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+      <div style="background:#D97706;color:#fff;font-size:10.5px;font-weight:800;padding:2px 9px;border-radius:4px">그룹 vs 세그먼트</div>
     </div>
-    <div style="font-size:12.5px;color:#334155;line-height:1.8">
-      화주사의 발주·주문 기준으로 여러 트래킹을 묶을 때, 트래킹 등록 시 <strong>order_no (발주번호/주문번호)</strong>를 입력합니다.<br>
-      같은 order_no를 가진 트래킹들을 그룹으로 묶으면 <strong>하나의 주문 전체 여정</strong>을 추적할 수 있습니다.<br>
-      <span style="color:#B45309;font-size:12px">※ 주문 앵커는 별도 엔티티가 아니라 Tracking 테이블의 필드(order_no)로 구현됩니다.</span>
-    </div>
-    <div style="display:flex;align-items:center;gap:6px;margin-top:10px;font-size:12px;color:#64748B">
-      <div style="background:#DBEAFE;color:#1D4ED8;padding:4px 10px;border-radius:6px;font-weight:700;font-size:11.5px">트래킹 A<br><span style="font-size:10px;font-weight:500">order_no: PO-2026-001</span></div>
-      <div style="color:#94A3B8">+</div>
-      <div style="background:#DBEAFE;color:#1D4ED8;padding:4px 10px;border-radius:6px;font-weight:700;font-size:11.5px">트래킹 B<br><span style="font-size:10px;font-weight:500">order_no: PO-2026-001</span></div>
-      <div style="color:#94A3B8">→</div>
-      <div style="background:#EDE9FE;color:#5B21B6;padding:4px 10px;border-radius:6px;font-weight:700;font-size:11.5px">그룹 생성<br><span style="font-size:10px;font-weight:500">PO-2026-001 전체 여정</span></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;font-size:12.5px;color:#334155;line-height:1.8">
+      <div style="background:#fff;border:1px solid #FCD34D;border-radius:8px;padding:10px 12px">
+        <div style="font-weight:800;color:#92400E;margin-bottom:4px">Segment — 하나의 여정을 구간 분리</div>
+        트래킹 1개 안에서 구간별로 측정대상·조건이 달라질 때. 순서가 있는 연속 여정.<br>
+        <span style="font-size:11px;color:#64748B">예: 공장→항구(트럭) → 항구→해외(선박) → 해외→고객사(현지트럭)</span>
+      </div>
+      <div style="background:#fff;border:1px solid #FCD34D;border-radius:8px;padding:10px 12px">
+        <div style="font-weight:800;color:#92400E;margin-bottom:4px">Group — 독립 트래킹들을 업무 단위로 묶음</div>
+        각각 독립적으로 존재해야 하는 트래킹을 계약·프로젝트 기준으로 묶을 때.<br>
+        <span style="font-size:11px;color:#64748B">예: 분할 선적 3건, SPACE+TRANSPORT 혼합, 정기 납품 계약 묶음</span>
+      </div>
     </div>
   </div>
 
@@ -2206,7 +2206,7 @@ p{line-height:1.75;color:#334155;margin-bottom:8px;font-size:13px}
             
             <div>
               <strong>그룹 사용 권장</strong><br>
-              <span style="color:#374151">멀티모달(창고→차량→선박→항공) 전체 여정을 단일 그룹으로 표현. 복수 트래킹의 통합 대시보드가 필요할 때. 최대 2단계 중첩까지 허용.</span>
+              <span style="color:#374151">독립적인 트래킹 여러 개를 하나의 업무 단위로 묶을 때. 분할 선적(같은 계약, 다른 컨테이너), SPACE+TRANSPORT 혼합 관리, 정기 납품 계약 묶음. order_no 일치 조건 없음 — 운영자가 자유롭게 구성.</span>
             </div>
           </div>
           <div class="decision-opt decision-opt-no">
