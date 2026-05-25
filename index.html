@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>통합 플랫폼 핵심 구조도 — v1.0</title>
+<title>통합 플랫폼 핵심 구조도 — v1.1</title>
 <style>
 :root {
   --navy:#1B2C5E; --blue:#2563EB; --blue-l:#DBEAFE;
@@ -283,7 +283,7 @@ p{line-height:1.75;color:#334155;margin-bottom:8px;font-size:13px}
 <div id="sidebar">
   <div class="logo">
     <div class="brand">WILLOG</div>
-    <div class="doc-t">통합 플랫폼 핵심 구조도<br>v1.0 · 2026-05-23</div>
+    <div class="doc-t">통합 플랫폼 핵심 구조도<br>v1.1 · 2026-05-26</div>
   </div>
   <nav>
     <div class="grp">개요</div>
@@ -297,6 +297,7 @@ p{line-height:1.75;color:#334155;margin-bottom:8px;font-size:13px}
     <a href="#group-tracking">2. 그룹 / 트래킹 / 세그먼트</a>
     <a href="#measurement-device">3. 측정대상 &amp; 디바이스</a>
     <a href="#alert-preset">4. 알림 프리셋</a>
+    <a href="#cargo-item">5. 화물(CargoItem) &amp; 제품 마스터</a>
     <a href="#decision-guide">7. 권장 구조 및 결정 기준</a>
 
     <div class="grp">시나리오 (참고)</div>
@@ -322,11 +323,13 @@ p{line-height:1.75;color:#334155;margin-bottom:8px;font-size:13px}
   <h1>통합 플랫폼 핵심 구조도 — 계층 · 관계 · 시나리오</h1>
   <p>그룹 / 트래킹 / 세그먼트 / 측정대상 / 디바이스 / 알림 프리셋의 계층 구조와 실고객사 시나리오를 정리했습니다.</p>
   <div class="doc-meta">
-    <span><strong>작성일</strong>  2026-05-23</span>
+    <span><strong>작성일</strong>  2026-05-26</span>
     <span><strong>작성자</strong>  Coco</span>
-    <span><strong>버전</strong>  v1.0</span>
+    <span><strong>버전</strong>  v1.1</span>
+    <span><strong>이전 버전</strong>  v1.1 (2026-05-24)</span>
   </div>
 </div>
+
 
 <div id="view-plan">
 
@@ -351,7 +354,7 @@ p{line-height:1.75;color:#334155;margin-bottom:8px;font-size:13px}
       <div class="rel-card-body" style="font-size:12.5px;color:#334155;line-height:1.7">
         플랫폼의 <strong>최상위 회사 단위</strong>. 플랫폼에 가입한 각 회사가 하나의 Tenant이며, <strong>운송사(Carrier)</strong> 또는 <strong>화주사(Shipper)</strong> 타입을 가집니다.<br><br>
         Tenant 간 연결은 두 가지 방식입니다.<br>
-        · <code style="background:#F1F5F9;padding:1px 4px;border-radius:3px">shipper_code</code> — 외부 회사 간 수평 연결. 운송 등록 시 화주코드를 입력하면 화주사가 해당 트래킹을 읽기 전용으로 조회 가능.<br>
+        · <code style="background:#F1F5F9;padding:1px 4px;border-radius:3px">shipper_code</code> — 외부 회사 간 수평 연결. 화물(CargoItem) 등록 시 화주코드를 입력하면 화주사가 해당 트래킹을 읽기 전용으로 조회 가능.<br>
         · <code style="background:#F1F5F9;padding:1px 4px;border-radius:3px">parent_tenant_id</code> — 같은 법인 내 본사/지사 수직 계층. 본사는 하위 지사 데이터를 자동 통합 조회. 지사 간 공유는 본사 어드민이 권한 설정.
       </div>
     </div>
@@ -436,14 +439,40 @@ p{line-height:1.75;color:#334155;margin-bottom:8px;font-size:13px}
 
     <div class="rel-card">
       <div class="rel-card-head" style="background:#D1FAE5;color:#065F46">
-        
+
         <div>
           <div style="font-size:13px;font-weight:800">화주코드 (shipper_code)</div>
           <div style="font-size:10.5px;opacity:.7">크로스 Tenant 연결 코드 · 모든 Tenant 보유</div>
         </div>
       </div>
       <div class="rel-card-body" style="font-size:12.5px;color:#334155;line-height:1.7">
-        모든 Tenant가 보유하는 크로스 Tenant 연결 코드. 내 회사 화물을 다른 운송사가 운송할 때, 운송사가 트래킹 등록 시 내 shipper_code를 입력하면 내 Tenant 대시보드에 자동 연결됩니다. <strong>운송사 타입도 화주 역할 시 자신의 shipper_code를 제공할 수 있습니다.</strong>
+        모든 Tenant가 보유하는 크로스 Tenant 연결 코드. 내 회사 화물을 다른 운송사가 운송할 때, 운송사가 화물(CargoItem) 등록 시 내 shipper_code를 입력하면 내 Tenant 대시보드에 자동 연결됩니다. <strong>운송사 타입도 화주 역할 시 자신의 shipper_code를 제공할 수 있습니다.</strong>
+      </div>
+    </div>
+
+    <div class="rel-card">
+      <div class="rel-card-head" style="background:#FFEDD5;color:#C2410C">
+
+        <div>
+          <div style="font-size:13px;font-weight:800">화물 (CargoItem)</div>
+          <div style="font-size:10.5px;opacity:.7">cargo_item_id · 이번 운송의 화물</div>
+        </div>
+      </div>
+      <div class="rel-card-body" style="font-size:12.5px;color:#334155;line-height:1.7">
+        이번 운송에서 측정대상(그릇)에 탑재되는 <strong>실제 화물</strong>. 수량·화주코드 등 이번 운송에 한정된 정보를 보유합니다. <code style="background:#FEF3C7;padding:1px 4px;border-radius:3px">shipper_code</code>로 화주별 데이터 격리. LCL 혼재 시 필수. 측정대상과의 연결은 <strong>시간 범위(loaded_at ~ unloaded_at)</strong>로 제한됩니다.
+      </div>
+    </div>
+
+    <div class="rel-card">
+      <div class="rel-card-head" style="background:#D1FAE5;color:#065F46">
+
+        <div>
+          <div style="font-size:13px;font-weight:800">제품 마스터 (ProductMaster)</div>
+          <div style="font-size:10.5px;opacity:.7">product_id · 품목 기준 정보</div>
+        </div>
+      </div>
+      <div class="rel-card-body" style="font-size:12.5px;color:#334155;line-height:1.7">
+        제품 분류·규격·취급 주의사항 등 <strong>품목 자체의 기준 정보</strong>. <strong>운송사가 발주서·주문서를 기준으로 등록</strong>합니다. 화주사는 조회 전용. 여러 화물(CargoItem)이 동일 제품 마스터를 참조합니다.
       </div>
     </div>
 
@@ -545,7 +574,7 @@ p{line-height:1.75;color:#334155;margin-bottom:8px;font-size:13px}
   </div>
 
   <div class="callout callout-blue" style="margin-top:18px">
-    <strong>핵심 원칙:</strong> 모든 Tenant는 고유한 <code>shipper_code</code>를 보유합니다. 트래킹 등록 시 상대 회사의 <code>shipper_code</code>를 입력하면 해당 Tenant에서 자동으로 읽기 전용 조회가 연결됩니다. 운송사 타입도 다른 운송사에게 화물을 위탁하는 경우(화주 역할) 자신의 <code>shipper_code</code>를 제공할 수 있습니다.
+    <strong>핵심 원칙:</strong> 모든 Tenant는 고유한 <code>shipper_code</code>를 보유합니다. 화물(CargoItem) 등록 시 상대 회사의 <code>shipper_code</code>를 입력하면 해당 Tenant에서 자동으로 읽기 전용 조회가 연결됩니다. <strong>shipper_code는 FCL/LCL 공통으로 CargoItem 레벨에서만 관리합니다.</strong> 운송사 타입도 다른 운송사에게 화물을 위탁하는 경우(화주 역할) 자신의 <code>shipper_code</code>를 제공할 수 있습니다.
   </div>
 </section>
 
@@ -558,69 +587,133 @@ p{line-height:1.75;color:#334155;margin-bottom:8px;font-size:13px}
 
   <div class="erd-wrap" style="margin-top:16px">
 
-    <!-- 핵심 계층 흐름 -->
-    <div style="font-size:11px;font-weight:700;color:#94A3B8;text-transform:uppercase;letter-spacing:.08em;margin-bottom:20px">핵심 계층 흐름</div>
-
-    <!-- Row 1: 회사(Tenant) → Tracking → Segment (기본 직결 흐름) -->
-    <div class="erd-row">
-      <div class="erd-box" style="background:#EDE9FE;color:#5B21B6;border:1.5px solid #C4B5FD">회사(Tenant)<br><span style="font-size:10px;font-weight:500;opacity:.75">Tenant</span></div>
-      <div class="erd-rel"><span>1 : N</span><div class="erd-line"></div></div>
-      <div class="erd-box" style="background:#DBEAFE;color:#1D4ED8;border:2px solid #3B82F6;font-weight:800">트래킹<br><span style="font-size:10px;font-weight:500;opacity:.75">운송형 / 공간형</span></div>
-      <div class="erd-rel"><span>1 : N</span><div class="erd-line"></div></div>
-      <div class="erd-box" style="background:#CFFAFE;color:#0E7490;border:1.5px solid #67E8F9">세그먼트<br><span style="font-size:10px;font-weight:500;opacity:.75">경유지 분리 (선택)</span></div>
-    </div>
-
-    <!-- 그룹: 선택적 묶음 레이어 -->
-    <div style="margin-top:10px;margin-bottom:4px">
-      <div style="display:inline-flex;align-items:center;gap:12px;border:1.5px dashed #CBD5E1;border-radius:8px;padding:8px 16px;background:#FAFAFF">
-        <div style="font-size:11.5px;font-weight:800;color:#334155">[선택] 그룹</div>
-        <div style="width:1px;height:16px;background:#E2E8F0"></div>
-        <div style="font-size:11px;color:#64748B">트래킹 여러 개를 하나의 여정으로 묶을 때 사용 · 최대 2단계 중첩</div>
-        <div style="font-size:10.5px;color:#94A3B8;font-weight:600">회사 → 그룹 → 트래킹(들)</div>
+    <!-- 핵심 계층 흐름 (허브-스포크 구조) -->
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px">
+      <div style="font-size:11px;font-weight:700;color:#94A3B8;text-transform:uppercase;letter-spacing:.08em">핵심 계층 흐름</div>
+      <div style="display:flex;gap:14px;align-items:center;flex-wrap:wrap">
+        <div style="display:flex;align-items:center;gap:5px;font-size:10.5px;color:#1D4ED8;font-weight:700"><div style="width:8px;height:8px;border-radius:50%;background:#2563EB"></div>핵심 허브</div>
+        <div style="display:flex;align-items:center;gap:5px;font-size:10.5px;color:#334155"><div style="width:10px;height:10px;border-radius:2px;border:2px solid #92400E"></div>필수 연결</div>
+        <div style="display:flex;align-items:center;gap:5px;font-size:10.5px;color:#94A3B8"><div style="width:10px;height:10px;border-radius:2px;border:1.5px dashed #CBD5E1"></div>선택 연결</div>
       </div>
     </div>
 
-    <!-- vertical connector from Tracking down -->
-    <div style="padding-left:330px">
-      <div style="height:18px;width:2px;background:#CBD5E1;margin-left:20px"></div>
+    <!-- TOP: 회사 → [트래킹 허브] + 그룹(선택) -->
+    <div style="background:#F8FAFF;border:1.5px solid #E2E8F0;border-radius:12px;padding:16px 20px;margin-bottom:6px;display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+      <div style="display:flex;flex-direction:column;align-items:center;gap:3px">
+        <div style="background:#EDE9FE;color:#5B21B6;border:1.5px solid #C4B5FD;border-radius:8px;padding:9px 16px;font-size:12px;font-weight:800;text-align:center;white-space:nowrap">회사(Tenant)</div>
+        <div style="font-size:9.5px;color:#94A3B8">최상위 소유</div>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:1px">
+        <span style="font-size:10px;color:#64748B;font-weight:700">1 : N</span>
+        <div style="height:2px;width:40px;background:#94A3B8"></div>
+      </div>
+      <!-- 트래킹 HUB -->
+      <div style="background:#DBEAFE;color:#1D4ED8;border:2.5px solid #2563EB;border-radius:12px;padding:12px 28px;font-size:15px;font-weight:900;text-align:center;box-shadow:0 0 0 5px rgba(37,99,235,0.08)">
+        ★ 트래킹<br><span style="font-size:10px;font-weight:600;opacity:.8">운송형 / 공간형 · order_no</span>
+      </div>
+      <!-- 그룹 옵션 -->
+      <div style="margin-left:auto;display:flex;align-items:center;gap:8px">
+        <div style="display:flex;flex-direction:column;align-items:center;gap:1px">
+          <span style="font-size:9.5px;color:#94A3B8">선택</span>
+          <div style="width:36px;border-top:1.5px dashed #CBD5E1"></div>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:3px">
+          <div style="background:#F5F3FF;color:#6D28D9;border:1.5px dashed #C4B5FD;border-radius:8px;padding:8px 14px;font-size:11.5px;font-weight:700;text-align:center">그룹<br><span style="font-size:9.5px;font-weight:500;opacity:.7">트래킹 묶음 · 최대 2단계</span></div>
+          <div style="font-size:9.5px;color:#94A3B8">회사 → 그룹 → 트래킹(들)</div>
+        </div>
+      </div>
     </div>
 
-    <!-- Row 2: Tracking  측정대상  디바이스 -->
-    <div class="erd-row">
-      <div style="width:330px;flex-shrink:0"></div>
-      <div class="erd-box" style="background:#DBEAFE;color:#1D4ED8;border:2px solid #3B82F6;font-weight:800">트래킹 </div>
-      <div class="erd-rel"><span style="color:#DB2777">N : M</span><div class="erd-line"></div><span style="font-size:9.5px;color:#94A3B8">연결</span></div>
-      <div class="erd-box" style="background:#FEF3C7;color:#92400E;border:1.5px solid #FCD34D">측정대상<br><span style="font-size:10px;font-weight:500;opacity:.75">16종 물리 자산</span></div>
-      <div class="erd-rel"><span>1 : 1</span><div class="erd-line"></div></div>
-      <div class="erd-box" style="background:#EDE9FE;color:#5B21B6;border:1.5px solid #C4B5FD">디바이스<br><span style="font-size:10px;font-weight:500;opacity:.75">실시간 기기·비실시간 기기</span></div>
+    <!-- 트래킹에서 연결 indicator -->
+    <div style="display:flex;align-items:center;gap:6px;margin:0 0 6px 24px">
+      <div style="width:2px;height:18px;background:#CBD5E1"></div>
+      <div style="font-size:10px;color:#94A3B8;font-weight:600">트래킹에서 연결되는 항목들 ↓</div>
     </div>
 
-    <!-- vertical connector -->
-    <div style="padding-left:330px">
-      <div style="height:18px;width:2px;background:#CBD5E1;margin-left:20px"></div>
+    <!-- SPOKES: 4-column grid -->
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:10px">
+
+      <!-- Spoke 1: 측정대상 → 디바이스 (REQUIRED) -->
+      <div style="border:2px solid #D97706;border-radius:10px;overflow:hidden">
+        <div style="background:#D97706;color:#fff;padding:6px 10px;font-size:10px;font-weight:800;text-align:center;letter-spacing:.03em">★ 필수 최소 구성</div>
+        <div style="padding:12px;display:flex;flex-direction:column;align-items:center;gap:6px">
+          <div style="background:#FEF3C7;color:#92400E;border:1.5px solid #FCD34D;border-radius:7px;padding:8px 10px;font-size:11.5px;font-weight:800;text-align:center;width:100%;box-sizing:border-box">측정대상<br><span style="font-size:9.5px;font-weight:500;opacity:.75">16종 물리 자산</span></div>
+          <div style="display:flex;flex-direction:column;align-items:center">
+            <span style="font-size:9px;color:#64748B">1 : 1</span>
+            <div style="width:2px;height:12px;background:#CBD5E1"></div>
+          </div>
+          <div style="background:#EDE9FE;color:#5B21B6;border:1.5px solid #C4B5FD;border-radius:7px;padding:8px 10px;font-size:11.5px;font-weight:700;text-align:center;width:100%;box-sizing:border-box">디바이스<br><span style="font-size:9.5px;font-weight:500;opacity:.75">실시간·비실시간</span></div>
+          <div style="font-size:10px;color:#92400E;text-align:center;line-height:1.5;margin-top:2px">트래킹 생성 시<br>반드시 연결</div>
+        </div>
+      </div>
+
+      <!-- Spoke 2: 세그먼트 (OPTIONAL) -->
+      <div style="border:1.5px dashed #5EEAD4;border-radius:10px;overflow:hidden">
+        <div style="background:#F0FDFA;border-bottom:1.5px dashed #5EEAD4;padding:6px 10px;font-size:10px;font-weight:700;color:#0D9488;text-align:center">선택 — 경유지 분리</div>
+        <div style="padding:12px;display:flex;flex-direction:column;align-items:center;gap:6px">
+          <div style="background:#CFFAFE;color:#0E7490;border:1.5px solid #67E8F9;border-radius:7px;padding:8px 10px;font-size:11.5px;font-weight:700;text-align:center;width:100%;box-sizing:border-box">세그먼트<br><span style="font-size:9.5px;font-weight:500;opacity:.75">경유지 단위</span></div>
+          <div style="display:flex;flex-direction:column;align-items:center">
+            <span style="font-size:9px;color:#64748B">1 : N</span>
+            <div style="width:2px;height:12px;background:#CBD5E1"></div>
+          </div>
+          <div style="background:#FEF3C7;color:#92400E;border:1.5px solid #FCD34D;border-radius:7px;padding:8px 10px;font-size:11.5px;font-weight:700;text-align:center;width:100%;box-sizing:border-box">측정대상<br><span style="font-size:9.5px;font-weight:500;opacity:.75">구간별 배정</span></div>
+          <div style="font-size:10px;color:#0D9488;text-align:center;line-height:1.5;margin-top:2px">구간별 다른 조건<br>필요할 때 사용</div>
+        </div>
+      </div>
+
+      <!-- Spoke 3: 알림 프리셋 (OPTIONAL) -->
+      <div style="border:1.5px dashed #F9A8D4;border-radius:10px;overflow:hidden">
+        <div style="background:#FFF0F5;border-bottom:1.5px dashed #F9A8D4;padding:6px 10px;font-size:10px;font-weight:700;color:#9D174D;text-align:center">선택 — 알림 설정</div>
+        <div style="padding:12px;display:flex;flex-direction:column;align-items:center;gap:6px">
+          <div style="background:#FCE7F3;color:#9D174D;border:1.5px solid #F9A8D4;border-radius:7px;padding:16px 10px;font-size:11.5px;font-weight:700;text-align:center;width:100%;box-sizing:border-box">알림 프리셋<br><span style="font-size:9.5px;font-weight:500;opacity:.75">재사용 규칙 묶음</span></div>
+          <div style="font-size:10px;color:#9D174D;text-align:center;line-height:1.5;margin-top:2px">N:M 연결<br>세그먼트별 독립 적용</div>
+        </div>
+      </div>
+
+      <!-- Spoke 4: CargoItem → 제품마스터 (OPTIONAL / LCL required) -->
+      <div style="border:1.5px dashed #FB923C;border-radius:10px;overflow:hidden">
+        <div style="background:#FFF7ED;border-bottom:1.5px dashed #FB923C;padding:6px 10px;font-size:10px;font-weight:700;color:#C2410C;text-align:center">선택 (LCL 시 필수)</div>
+        <div style="padding:12px;display:flex;flex-direction:column;align-items:center;gap:6px">
+          <div style="background:#FFEDD5;color:#C2410C;border:1.5px solid #FB923C;border-radius:7px;padding:8px 10px;font-size:11.5px;font-weight:700;text-align:center;width:100%;box-sizing:border-box">화물(CargoItem)<br><span style="font-size:9.5px;font-weight:500;opacity:.75">shipper_code 보유</span></div>
+          <div style="display:flex;flex-direction:column;align-items:center">
+            <span style="font-size:9px;color:#64748B">N : 1</span>
+            <div style="width:2px;height:12px;background:#CBD5E1"></div>
+          </div>
+          <div style="background:#D1FAE5;color:#065F46;border:1.5px solid #6EE7B7;border-radius:7px;padding:8px 10px;font-size:11.5px;font-weight:700;text-align:center;width:100%;box-sizing:border-box">제품 마스터<br><span style="font-size:9.5px;font-weight:500;opacity:.75">품목 기준 정보</span></div>
+          <div style="font-size:10px;color:#C2410C;text-align:center;line-height:1.5;margin-top:2px">화물 내역 추적<br>혼재 시 화주 격리</div>
+        </div>
+      </div>
+
     </div>
 
-    <!-- Row 3: Tracking  알림 프리셋 -->
-    <div class="erd-row">
-      <div style="width:330px;flex-shrink:0"></div>
-      <div class="erd-box" style="background:#DBEAFE;color:#1D4ED8;border:2px solid #3B82F6;font-weight:800">트래킹 </div>
-      <div class="erd-rel"><span style="color:#DB2777">N : M</span><div class="erd-line"></div><span style="font-size:9.5px;color:#94A3B8">연결</span></div>
-      <div class="erd-box" style="background:#FCE7F3;color:#9D174D;border:1.5px solid #F9A8D4">알림 프리셋<br><span style="font-size:10px;font-weight:500;opacity:.75">재사용 규칙 묶음</span></div>
-      <div style="margin-left:10px;font-size:11.5px;color:#64748B;align-self:center">→ 세그먼트별 개별 적용 가능</div>
-    </div>
-
-    <!-- vertical connector -->
-    <div style="padding-left:330px">
-      <div style="height:18px;width:2px;background:#CBD5E1;margin-left:20px"></div>
-    </div>
-
-    <!-- Row 4: Tracking  제품 마스터 -->
-    <div class="erd-row">
-      <div style="width:330px;flex-shrink:0"></div>
-      <div class="erd-box" style="background:#DBEAFE;color:#1D4ED8;border:2px solid #3B82F6;font-weight:800">트래킹 </div>
-      <div class="erd-rel"><span style="color:#DB2777">N : M</span><div class="erd-line"></div><span style="font-size:9.5px;color:#94A3B8">연결</span></div>
-      <div class="erd-box" style="background:#D1FAE5;color:#065F46;border:1.5px solid #6EE7B7">제품 마스터<br><span style="font-size:10px;font-weight:500;opacity:.75">운송 화물 정보</span></div>
-      <div style="margin-left:10px;font-size:11.5px;color:#64748B;align-self:center">→ 화주사별 읽기 전용</div>
+    <!-- Chain A/B 요약 -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+      <div style="background:#F0FDF4;border:1px solid #6EE7B7;border-radius:8px;padding:10px 14px">
+        <div style="font-size:10px;font-weight:800;color:#059669;margin-bottom:7px">Chain A — FCL / 단일 화주 (CargoItem 선택)</div>
+        <div style="display:flex;align-items:center;gap:4px;flex-wrap:wrap">
+          <span style="background:#DBEAFE;color:#1D4ED8;padding:2px 7px;border-radius:4px;font-size:10.5px;font-weight:700">트래킹</span>
+          <span style="color:#94A3B8">→</span>
+          <span style="background:#FEF3C7;color:#92400E;padding:2px 7px;border-radius:4px;font-size:10.5px;font-weight:700">측정대상</span>
+          <span style="color:#94A3B8">→</span>
+          <span style="background:#FFEDD5;color:#C2410C;padding:2px 7px;border-radius:4px;font-size:10.5px;font-weight:700">CargoItem</span>
+          <span style="color:#94A3B8">→</span>
+          <span style="background:#D1FAE5;color:#065F46;padding:2px 7px;border-radius:4px;font-size:10.5px;font-weight:700">제품마스터</span>
+        </div>
+      </div>
+      <div style="background:#EFF6FF;border:1px solid #93C5FD;border-radius:8px;padding:10px 14px">
+        <div style="font-size:10px;font-weight:800;color:#1D4ED8;margin-bottom:7px">Chain B — LCL / 혼재 다화주 (CargoItem 필수)</div>
+        <div style="display:flex;align-items:center;gap:4px;flex-wrap:wrap">
+          <span style="background:#DBEAFE;color:#1D4ED8;padding:2px 7px;border-radius:4px;font-size:10.5px;font-weight:700">트래킹</span>
+          <span style="color:#94A3B8">→</span>
+          <span style="background:#CFFAFE;color:#0E7490;padding:2px 7px;border-radius:4px;font-size:10.5px;font-weight:700">세그먼트</span>
+          <span style="color:#94A3B8">→</span>
+          <span style="background:#FEF3C7;color:#92400E;padding:2px 7px;border-radius:4px;font-size:10.5px;font-weight:700">측정대상</span>
+          <span style="color:#94A3B8">→</span>
+          <span style="background:#FFEDD5;color:#C2410C;padding:2px 7px;border-radius:4px;font-size:10.5px;font-weight:700">CargoItem</span>
+          <span style="color:#94A3B8">→</span>
+          <span style="background:#D1FAE5;color:#065F46;padding:2px 7px;border-radius:4px;font-size:10.5px;font-weight:700">제품마스터</span>
+        </div>
+      </div>
     </div>
 
     <!-- Cross-Tenant 구분선 -->
@@ -667,6 +760,22 @@ p{line-height:1.75;color:#334155;margin-bottom:8px;font-size:13px}
       <div style="font-size:18px;margin-bottom:4px"></div>
       <div style="font-size:11px;font-weight:800;color:var(--navy)">트래킹  알림 프리셋</div>
       <div style="font-size:10.5px;color:#64748B;margin-top:3px">N : M</div>
+    </div>
+    <div style="background:#FFF7ED;border:1.5px solid #FED7AA;border-radius:8px;padding:12px 14px;text-align:center;grid-column:span 2">
+      <div style="font-size:11px;font-weight:800;color:#C2410C;margin-bottom:4px">화물(CargoItem) 연결 체인</div>
+      <div style="display:flex;align-items:center;justify-content:center;gap:4px;font-size:10.5px;color:#64748B;flex-wrap:wrap;margin-top:4px">
+        <span style="background:#DBEAFE;color:#1D4ED8;padding:2px 7px;border-radius:4px;font-weight:700">트래킹</span>
+        <span style="color:#94A3B8">→</span>
+        <span style="background:#FEF3C7;color:#92400E;padding:2px 7px;border-radius:4px;font-weight:700">측정대상</span>
+        <span style="color:#94A3B8">→</span>
+        <span style="background:#FFEDD5;color:#C2410C;padding:2px 7px;border-radius:4px;font-weight:700">CargoItem</span>
+        <span style="color:#94A3B8">→</span>
+        <span style="background:#D1FAE5;color:#065F46;padding:2px 7px;border-radius:4px;font-weight:700">제품마스터</span>
+        <span style="color:#94A3B8;margin:0 6px">|</span>
+        <span style="background:#CFFAFE;color:#0E7490;padding:2px 7px;border-radius:4px;font-weight:700">세그먼트</span>
+        <span style="color:#94A3B8">경유 시</span>
+        <span style="background:#FFEDD5;color:#C2410C;padding:2px 7px;border-radius:4px;font-weight:700">shipper_code 필수</span>
+      </div>
     </div>
   </div>
 </section>
@@ -864,7 +973,7 @@ p{line-height:1.75;color:#334155;margin-bottom:8px;font-size:13px}
     <!-- 결정 1 -->
     <div style="background:#fff;border:1.5px solid #E2E8F0;border-radius:12px;overflow:hidden">
       <div style="background:#EDE9FE;padding:12px 18px;display:flex;align-items:center;gap:10px">
-        <div style="background:#7C3AED;color:#fff;font-size:11px;font-weight:800;padding:3px 9px;border-radius:5px;white-space:nowrap">논의 1</div>
+        <div style="background:#7C3AED;color:#fff;font-size:11px;font-weight:800;padding:3px 9px;border-radius:5px;white-space:nowrap">논의 필요 1</div>
         <div style="font-size:13px;font-weight:800;color:#4C1D95">Tenant 개념 — 운송사/화주사가 각각 별도 Tenant를 갖는 것이 아니다</div>
       </div>
       <div style="padding:14px 18px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px">
@@ -886,7 +995,7 @@ p{line-height:1.75;color:#334155;margin-bottom:8px;font-size:13px}
     <!-- 결정 2 -->
     <div style="background:#fff;border:1.5px solid #E2E8F0;border-radius:12px;overflow:hidden">
       <div style="background:#DBEAFE;padding:12px 18px;display:flex;align-items:center;gap:10px">
-        <div style="background:#1D4ED8;color:#fff;font-size:11px;font-weight:800;padding:3px 9px;border-radius:5px;white-space:nowrap">논의 2</div>
+        <div style="background:#1D4ED8;color:#fff;font-size:11px;font-weight:800;padding:3px 9px;border-radius:5px;white-space:nowrap">논의 필요 2</div>
         <div style="font-size:13px;font-weight:800;color:#1E3A8A">타입 구분 기준 — "직접 트래킹을 생성·관리하는가?"</div>
       </div>
       <div style="padding:14px 18px">
@@ -915,7 +1024,7 @@ p{line-height:1.75;color:#334155;margin-bottom:8px;font-size:13px}
     <!-- 결정 3 -->
     <div style="background:#fff;border:1.5px solid #E2E8F0;border-radius:12px;overflow:hidden">
       <div style="background:#FEF3C7;padding:12px 18px;display:flex;align-items:center;gap:10px">
-        <div style="background:#D97706;color:#fff;font-size:11px;font-weight:800;padding:3px 9px;border-radius:5px;white-space:nowrap">논의 3</div>
+        <div style="background:#D97706;color:#fff;font-size:11px;font-weight:800;padding:3px 9px;border-radius:5px;white-space:nowrap">논의 필요 3</div>
         <div style="font-size:13px;font-weight:800;color:#92400E">shipper_code — 모든 Tenant가 보유</div>
       </div>
       <div style="padding:14px 18px;display:grid;grid-template-columns:1fr 1fr;gap:12px">
@@ -933,10 +1042,10 @@ p{line-height:1.75;color:#334155;margin-bottom:8px;font-size:13px}
       </div>
     </div>
 
-    <!-- 논의 5: 본사/지사 계층 구조 -->
+    <!-- 논의 필요 4: 본사/지사 계층 구조 -->
     <div style="background:#fff;border:1.5px solid #E2E8F0;border-radius:12px;overflow:hidden">
       <div style="background:#EDE9FE;padding:12px 18px;display:flex;align-items:center;gap:10px">
-        <div style="background:#7C3AED;color:#fff;font-size:11px;font-weight:800;padding:3px 9px;border-radius:5px;white-space:nowrap">논의 5</div>
+        <div style="background:#7C3AED;color:#fff;font-size:11px;font-weight:800;padding:3px 9px;border-radius:5px;white-space:nowrap">논의 필요 4</div>
         <div style="font-size:13px;font-weight:800;color:#4C1D95">본사/지사 Tenant 계층 구조 — parent_tenant_id 도입 검토</div>
       </div>
       <div style="padding:14px 18px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px">
@@ -955,10 +1064,10 @@ p{line-height:1.75;color:#334155;margin-bottom:8px;font-size:13px}
       </div>
     </div>
 
-    <!-- 결정 4: 엣지 케이스 -->
+    <!-- 논의 필요 5: 엣지 케이스 -->
     <div style="background:#fff;border:1.5px solid #E2E8F0;border-radius:12px;overflow:hidden">
       <div style="background:#FCE7F3;padding:12px 18px;display:flex;align-items:center;gap:10px">
-        <div style="background:#DB2777;color:#fff;font-size:11px;font-weight:800;padding:3px 9px;border-radius:5px;white-space:nowrap">논의 4</div>
+        <div style="background:#DB2777;color:#fff;font-size:11px;font-weight:800;padding:3px 9px;border-radius:5px;white-space:nowrap">논의 필요 5</div>
         <div style="font-size:13px;font-weight:800;color:#9D174D">엣지 케이스 — 어떤 타입으로 가입해야 하나?</div>
       </div>
       <div style="padding:14px 18px">
@@ -977,9 +1086,20 @@ p{line-height:1.75;color:#334155;margin-bottom:8px;font-size:13px}
               <td style="padding:9px 12px;color:#64748B">직접 트래킹을 생성·관리하는 주체이므로</td>
             </tr>
             <tr style="border-bottom:1px solid #F1F5F9">
-              <td style="padding:9px 12px;color:#334155">쿠팡처럼 자사 창고센터 운영</td>
-              <td style="padding:9px 12px;text-align:center"><span style="background:#DBEAFE;color:#1D4ED8;font-weight:700;font-size:11px;padding:3px 8px;border-radius:4px">운송사</span></td>
-              <td style="padding:9px 12px;color:#64748B">공간형 트래킹을 직접 등록·관리하므로</td>
+              <td style="padding:9px 12px;color:#334155">
+                <strong>쿠팡 CLS 케이스</strong><br>
+                <span style="font-size:11px;color:#94A3B8">① CLS 본사 (HQ) — 조회 전용</span><br>
+                <span style="font-size:11px;color:#94A3B8">② 쿠팡 FC (물류센터) — 창고 운영 주체</span>
+              </td>
+              <td style="padding:9px 12px;text-align:center;vertical-align:top;padding-top:14px">
+                <span style="background:#DCFCE7;color:#15803D;font-weight:700;font-size:11px;padding:3px 8px;border-radius:4px;display:block;margin-bottom:4px">화주사</span>
+                <span style="background:#DBEAFE;color:#1D4ED8;font-weight:700;font-size:11px;padding:3px 8px;border-radius:4px;display:block">운송사</span>
+              </td>
+              <td style="padding:9px 12px;color:#64748B;vertical-align:top;padding-top:14px">
+                <span style="display:block">CLS HQ: 자사 화물 조회만 필요 → 화주사 타입 (shipper_code로 읽기 전용 연결)</span>
+                <span style="display:block;margin-top:4px">쿠팡 FC: 공간형 트래킹을 직접 등록·관리 → 운송사 타입</span>
+                <span style="display:block;margin-top:6px;font-size:11px;color:#D97706;font-weight:600">※ 가입 시 초기 선택 항목 — 동일 법인도 역할에 따라 타입이 분리됨</span>
+              </td>
             </tr>
             <tr style="border-bottom:1px solid #F1F5F9">
               <td style="padding:9px 12px;color:#334155">운송은 외부 위탁, 조회만 필요한 제조사</td>
@@ -1102,9 +1222,29 @@ p{line-height:1.75;color:#334155;margin-bottom:8px;font-size:13px}
 
   <!-- 그룹 = 전체 여정 개념 -->
   <div style="font-size:13px;font-weight:800;color:var(--navy);margin:20px 0 10px">그룹 — 복합 여정 묶음</div>
-  <div class="callout" style="background:#F5F3FF;border-left:4px solid #7C3AED;padding:14px 18px;margin-bottom:16px">
+  <div class="callout" style="background:#F5F3FF;border-left:4px solid #7C3AED;padding:14px 18px;margin-bottom:12px">
     <strong>그룹은 전체 여정을 하나로 묶는 논리 단위입니다.</strong><br>
     <span style="font-size:12.5px;color:#334155;line-height:1.8">창고 출발 → 국내 차량 → 항만 → 선박 → 목적지 항만 → 국내 차량 → 도착 처럼 여러 운송 수단과 경유지를 하나의 그룹으로 묶어 전체 여정을 한 화면에서 조회합니다.</span>
+  </div>
+
+  <!-- 주문 앵커 개념 (v1.1 추가) -->
+  <div style="background:#FFFBEB;border:1.5px solid #FCD34D;border-radius:10px;padding:14px 18px;margin-bottom:16px">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+      <div style="background:#D97706;color:#fff;font-size:10.5px;font-weight:800;padding:2px 9px;border-radius:4px">주문 앵커 개념</div>
+      <div style="font-size:12.5px;font-weight:700;color:#92400E">그룹 생성의 기준점 — <code style="font-size:11.5px;background:#FEF3C7;padding:1px 6px;border-radius:3px">order_no</code> 필드</div>
+    </div>
+    <div style="font-size:12.5px;color:#334155;line-height:1.8">
+      화주사의 발주·주문 기준으로 여러 트래킹을 묶을 때, 트래킹 등록 시 <strong>order_no (발주번호/주문번호)</strong>를 입력합니다.<br>
+      같은 order_no를 가진 트래킹들을 그룹으로 묶으면 <strong>하나의 주문 전체 여정</strong>을 추적할 수 있습니다.<br>
+      <span style="color:#B45309;font-size:12px">※ 주문 앵커는 별도 엔티티가 아니라 Tracking 테이블의 필드(order_no)로 구현됩니다.</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:6px;margin-top:10px;font-size:12px;color:#64748B">
+      <div style="background:#DBEAFE;color:#1D4ED8;padding:4px 10px;border-radius:6px;font-weight:700;font-size:11.5px">트래킹 A<br><span style="font-size:10px;font-weight:500">order_no: PO-2026-001</span></div>
+      <div style="color:#94A3B8">+</div>
+      <div style="background:#DBEAFE;color:#1D4ED8;padding:4px 10px;border-radius:6px;font-weight:700;font-size:11.5px">트래킹 B<br><span style="font-size:10px;font-weight:500">order_no: PO-2026-001</span></div>
+      <div style="color:#94A3B8">→</div>
+      <div style="background:#EDE9FE;color:#5B21B6;padding:4px 10px;border-radius:6px;font-weight:700;font-size:11.5px">그룹 생성<br><span style="font-size:10px;font-weight:500">PO-2026-001 전체 여정</span></div>
+    </div>
   </div>
 
   <!-- 여정 시각화 -->
@@ -1484,6 +1624,169 @@ p{line-height:1.75;color:#334155;margin-bottom:8px;font-size:13px}
 </section>
 
 <!-- ══════════════════════════════════
+     §5. 화물(CargoItem) & 제품 마스터
+══════════════════════════════════ -->
+<section id="cargo-item">
+  <h2>5. 화물(CargoItem) &amp; 제품 마스터</h2>
+  <p>트래킹과 제품 마스터 사이에는 <strong>화물(CargoItem)</strong> 레이어가 존재합니다. 같은 품목이라도 어느 주문의 누구 화물인지를 구분하기 위한 중간 레이어입니다. 제품 마스터는 운송사가 발주서·주문서를 보고 등록하며, 화주사는 조회만 가능합니다.</p>
+
+  <!-- 개념 구분 카드 -->
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:16px 0">
+    <div style="background:#D1FAE5;border:1.5px solid #6EE7B7;border-radius:12px;padding:18px 20px">
+      <div style="font-size:13px;font-weight:800;color:#065F46;margin-bottom:8px">제품 마스터 (ProductMaster)</div>
+      <div style="font-size:12px;color:#064E3B;line-height:1.8">
+        <strong>품목 기준 정보</strong><br>
+        제품 분류, 규격, 취급 주의사항 등 품목 자체의 기준 정보.<br>
+        <strong>운송사가 발주서·주문서를 기준으로 등록.</strong> 화주사는 조회 전용. 여러 화물(CargoItem)이 동일 제품 마스터를 참조.
+      </div>
+      <div style="margin-top:10px;font-size:11px;color:#059669;font-family:monospace;background:#ECFDF5;border-radius:6px;padding:6px 10px;line-height:1.8">
+        product_id<br>
+        product_name: "냉장 연어 200g"<br>
+        category: PERISHABLE<br>
+        temp_range: 0°C ~ 4°C<br>
+        handling_note: "충격 주의"
+      </div>
+    </div>
+    <div style="background:#FFEDD5;border:1.5px solid #FB923C;border-radius:12px;padding:18px 20px">
+      <div style="font-size:13px;font-weight:800;color:#C2410C;margin-bottom:8px">화물 (CargoItem)</div>
+      <div style="font-size:12px;color:#7C2D12;line-height:1.8">
+        <strong>이번 운송의 화물</strong><br>
+        이번 운송에서 측정대상에 실리는 실제 화물. 수량, 화주코드, 적재 위치 등 이번 운송에 한정된 정보 보유.<br>
+        <code style="font-size:11px;background:#FED7AA;padding:1px 5px;border-radius:3px">shipper_code</code>로 화주별 데이터 격리 — 화주사 연결 시 필수 (FCL/LCL 공통). 항상 CargoItem 레벨에서 관리.
+      </div>
+      <div style="margin-top:10px;font-size:11px;color:#C2410C;font-family:monospace;background:#FFF7ED;border-radius:6px;padding:6px 10px;line-height:1.8">
+        cargo_item_id<br>
+        shipper_code: "SHIPPER-A-001"<br>
+        product_id: → ProductMaster 참조<br>
+        quantity: 50<br>
+        loaded_at / unloaded_at (시간 제한)
+      </div>
+    </div>
+  </div>
+
+  <!-- 두 관계 체인 명세 -->
+  <h3>두 관계 체인</h3>
+
+  <!-- Chain A -->
+  <div style="background:#F0FDF4;border:1.5px solid #6EE7B7;border-radius:10px;padding:16px 20px;margin-bottom:12px">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+      <div style="background:#059669;color:#fff;font-size:11px;font-weight:800;padding:3px 10px;border-radius:5px">Chain A</div>
+      <div style="font-size:13px;font-weight:700;color:#065F46">FCL · 단일 화주 (세그먼트 없음)</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:12px">
+      <div style="background:#DBEAFE;color:#1D4ED8;border:1.5px solid #93C5FD;border-radius:7px;padding:7px 14px;font-size:12px;font-weight:700;text-align:center">트래킹<br><span style="font-size:10px;font-weight:500">order_no 보유</span></div>
+      <div style="font-size:10.5px;color:#94A3B8;font-weight:700;text-align:center;padding:0 4px">1:N<br>→</div>
+      <div style="background:#FEF3C7;color:#92400E;border:1.5px solid #FCD34D;border-radius:7px;padding:7px 14px;font-size:12px;font-weight:700;text-align:center">측정대상<br><span style="font-size:10px;font-weight:500">컨테이너·팔레트</span></div>
+      <div style="font-size:10.5px;color:#94A3B8;font-weight:700;text-align:center;padding:0 4px">1:N<br>→</div>
+      <div style="background:#FFEDD5;color:#C2410C;border:1.5px solid #FB923C;border-radius:7px;padding:7px 14px;font-size:12px;font-weight:700;text-align:center">화물(CargoItem)<br><span style="font-size:10px;font-weight:500">shipper_code</span></div>
+      <div style="font-size:10.5px;color:#94A3B8;font-weight:700;text-align:center;padding:0 4px">N:1<br>→</div>
+      <div style="background:#D1FAE5;color:#065F46;border:1.5px solid #6EE7B7;border-radius:7px;padding:7px 14px;font-size:12px;font-weight:700;text-align:center">제품 마스터<br><span style="font-size:10px;font-weight:500">품목 기준 정보</span></div>
+    </div>
+    <div style="font-size:12px;color:#334155;line-height:1.7">
+      <strong>FCL (Full Container Load):</strong> 컨테이너 전체를 단일 화주가 사용. shipper_code는 CargoItem 레벨에서 관리 (FCL/LCL 동일). 화주사 연결 필요 시 CargoItem 등록 필요. 화주 연결 없는 내부 운송만 CargoItem 생략 가능.
+    </div>
+  </div>
+
+  <!-- Chain B -->
+  <div style="background:#EFF6FF;border:1.5px solid #93C5FD;border-radius:10px;padding:16px 20px;margin-bottom:16px">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+      <div style="background:#1D4ED8;color:#fff;font-size:11px;font-weight:800;padding:3px 10px;border-radius:5px">Chain B</div>
+      <div style="font-size:13px;font-weight:700;color:#1E3A8A">LCL · 혼재 다화주 (세그먼트 포함)</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:12px">
+      <div style="background:#DBEAFE;color:#1D4ED8;border:1.5px solid #93C5FD;border-radius:7px;padding:7px 14px;font-size:12px;font-weight:700;text-align:center">트래킹<br><span style="font-size:10px;font-weight:500">order_no 보유</span></div>
+      <div style="font-size:10.5px;color:#94A3B8;font-weight:700;text-align:center;padding:0 4px">1:N<br>→</div>
+      <div style="background:#CFFAFE;color:#0E7490;border:1.5px solid #67E8F9;border-radius:7px;padding:7px 14px;font-size:12px;font-weight:700;text-align:center">세그먼트<br><span style="font-size:10px;font-weight:500">경유지 분리</span></div>
+      <div style="font-size:10.5px;color:#94A3B8;font-weight:700;text-align:center;padding:0 4px">1:N<br>→</div>
+      <div style="background:#FEF3C7;color:#92400E;border:1.5px solid #FCD34D;border-radius:7px;padding:7px 14px;font-size:12px;font-weight:700;text-align:center">측정대상<br><span style="font-size:10px;font-weight:500">컨테이너·팔레트</span></div>
+      <div style="font-size:10.5px;color:#94A3B8;font-weight:700;text-align:center;padding:0 4px">1:N<br>→</div>
+      <div style="background:#FFEDD5;color:#C2410C;border:1.5px solid #FB923C;border-radius:7px;padding:7px 14px;font-size:12px;font-weight:700;text-align:center">화물(CargoItem)<br><span style="font-size:10px;font-weight:500">shipper_code 필수</span></div>
+      <div style="font-size:10.5px;color:#94A3B8;font-weight:700;text-align:center;padding:0 4px">N:1<br>→</div>
+      <div style="background:#D1FAE5;color:#065F46;border:1.5px solid #6EE7B7;border-radius:7px;padding:7px 14px;font-size:12px;font-weight:700;text-align:center">제품 마스터<br><span style="font-size:10px;font-weight:500">품목 기준 정보</span></div>
+    </div>
+    <div style="font-size:12px;color:#334155;line-height:1.7">
+      <strong>LCL (Less than Container Load) 혼재:</strong> 동일 컨테이너에 여러 화주의 화물이 혼재. 세그먼트별로 측정대상이 분리되고, CargoItem마다 shipper_code가 다름 → 화주별 데이터 격리 보장. CargoItem <strong>필수</strong>.
+    </div>
+  </div>
+
+  <!-- 측정대상 ↔ CargoItem 시간 제한 연결 -->
+  <h3>측정대상 ↔ 화물(CargoItem) 시간 제한 연결</h3>
+  <div class="callout callout-amber" style="margin-bottom:14px">
+    <strong>그릇(측정대상)과 내용물(CargoItem)의 연결은 시간 범위(loaded_at ~ unloaded_at)로 제한됩니다.</strong><br>
+    <span style="font-size:12.5px;color:#334155;line-height:1.8">동일 팔레트가 환적(transshipment) 시 화물이 교체되거나, 팔레트 자체가 교체될 수 있습니다. 이를 이력으로 추적하기 위해 시간 제한 연결을 사용합니다.</span>
+  </div>
+  <div style="background:#fff;border:1.5px solid var(--gray-m);border-radius:10px;overflow:hidden;margin-bottom:14px">
+    <table style="width:100%;border-collapse:collapse;font-size:12.5px">
+      <thead>
+        <tr style="background:#F8FAFF">
+          <th style="padding:9px 14px;text-align:left;color:#334155;font-weight:700;border-bottom:1.5px solid var(--gray-m)">시나리오</th>
+          <th style="padding:9px 14px;text-align:left;color:#334155;font-weight:700;border-bottom:1.5px solid var(--gray-m)">측정대상</th>
+          <th style="padding:9px 14px;text-align:left;color:#334155;font-weight:700;border-bottom:1.5px solid var(--gray-m)">CargoItem 변화</th>
+          <th style="padding:9px 14px;text-align:left;color:#334155;font-weight:700;border-bottom:1.5px solid var(--gray-m)">처리 방식</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr style="border-bottom:1px solid #F1F5F9">
+          <td style="padding:9px 14px;color:#334155">환적 (Transshipment)</td>
+          <td style="padding:9px 14px;color:#64748B">동일 컨테이너 유지</td>
+          <td style="padding:9px 14px;color:#64748B">화물이 다른 선박으로 이동</td>
+          <td style="padding:9px 14px;color:#64748B">기존 연결 unloaded_at 기록 → 새 연결 생성</td>
+        </tr>
+        <tr style="border-bottom:1px solid #F1F5F9">
+          <td style="padding:9px 14px;color:#334155">팔레트 교체</td>
+          <td style="padding:9px 14px;color:#64748B">측정대상(팔레트) 교체</td>
+          <td style="padding:9px 14px;color:#64748B">동일 CargoItem, 다른 그릇</td>
+          <td style="padding:9px 14px;color:#64748B">새 측정대상에 동일 CargoItem 재연결</td>
+        </tr>
+        <tr>
+          <td style="padding:9px 14px;color:#334155">LCL 분리 배송</td>
+          <td style="padding:9px 14px;color:#64748B">세그먼트별 다른 팔레트</td>
+          <td style="padding:9px 14px;color:#64748B">shipper_code별 CargoItem 분리</td>
+          <td style="padding:9px 14px;color:#64748B">세그먼트 측정대상에 화주별 CargoItem 각각 연결</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- FCL vs LCL 비교 -->
+  <h3>FCL vs LCL — CargoItem 사용 기준</h3>
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin:12px 0">
+    <div style="background:#fff;border:1.5px solid var(--gray-m);border-radius:10px;overflow:hidden">
+      <div style="background:#059669;color:#fff;padding:10px 16px;font-size:12.5px;font-weight:800">FCL (Full Container Load)</div>
+      <div style="padding:14px 16px;font-size:12px;color:#334155;line-height:1.8">
+        <div style="margin-bottom:6px"><span style="color:#059669;font-weight:700">✓</span> 단일 화주가 컨테이너 전체 사용</div>
+        <div style="margin-bottom:6px"><span style="color:#059669;font-weight:700">✓</span> shipper_code → CargoItem 레벨 (FCL/LCL 동일)</div>
+        <div style="margin-bottom:6px"><span style="color:#6B7280;font-weight:700">◦</span> CargoItem → 화주 연결 시 필수, 내부 운송 시 선택</div>
+        <div><span style="color:#6B7280;font-weight:700">◦</span> 세그먼트 없어도 운영 가능</div>
+      </div>
+    </div>
+    <div style="background:#fff;border:1.5px solid var(--gray-m);border-radius:10px;overflow:hidden">
+      <div style="background:#1D4ED8;color:#fff;padding:10px 16px;font-size:12.5px;font-weight:800">LCL (Less than Container Load)</div>
+      <div style="padding:14px 16px;font-size:12px;color:#334155;line-height:1.8">
+        <div style="margin-bottom:6px"><span style="color:#1D4ED8;font-weight:700">✓</span> 다수 화주의 화물이 혼재</div>
+        <div style="margin-bottom:6px"><span style="color:#1D4ED8;font-weight:700">✓</span> shipper_code → CargoItem 레벨 (FCL/LCL 동일)</div>
+        <div style="margin-bottom:6px"><span style="color:#DC2626;font-weight:700">★</span> CargoItem → <strong>필수</strong> (화주별 데이터 격리)</div>
+        <div><span style="color:#DC2626;font-weight:700">★</span> 세그먼트 구분 → <strong>강력 권장</strong></div>
+      </div>
+    </div>
+    <div style="background:#fff;border:1.5px solid #E2E8F0;border-radius:10px;overflow:hidden">
+      <div style="background:#64748B;color:#fff;padding:10px 16px;font-size:12.5px;font-weight:800">공차 / 화물 미확정</div>
+      <div style="padding:14px 16px;font-size:12px;color:#334155;line-height:1.8">
+        <div style="margin-bottom:6px"><span style="color:#6B7280;font-weight:700">◦</span> 빈 차량·컨테이너 이동 (공차 회송)</div>
+        <div style="margin-bottom:6px"><span style="color:#6B7280;font-weight:700">◦</span> 집화 시점 — 화물 목록 아직 미확정</div>
+        <div style="margin-bottom:6px"><span style="color:#6B7280;font-weight:700">◦</span> 단순 차량 GPS·온도 모니터링 목적</div>
+        <div style="margin-bottom:6px"><span style="color:#DC2626;font-weight:700">→</span> CargoItem <strong>등록 안 함</strong> (측정대상만 연결)</div>
+        <div style="font-size:11px;color:#94A3B8;margin-top:4px">화물 확정 후 CargoItem 추후 추가 가능</div>
+      </div>
+    </div>
+  </div>
+  <div class="callout callout-amber" style="margin-top:4px">
+    <strong>설계 원칙:</strong> shipper_code는 FCL/LCL 구분 없이 항상 <strong>CargoItem 레벨에서만</strong> 관리합니다. 화주사 연결이 필요한 경우 운송형 트래킹에서도 CargoItem 등록이 필수입니다. 화주 연결 없는 내부 운송(자사 화물)만 CargoItem을 생략할 수 있습니다. 공간형(창고·FC)은 화물이 수시로 입출고되므로 CargoItem은 항상 선택입니다.
+  </div>
+
+</section>
+
+<!-- ══════════════════════════════════
      §7. 권장 구조 및 결정 기준
 ══════════════════════════════════ -->
 <section id="decision-guide">
@@ -1579,7 +1882,7 @@ p{line-height:1.75;color:#334155;margin-bottom:8px;font-size:13px}
         <div class="decision-q">트래킹과 측정대상의 관계는?</div>
         <div class="decision-opts">
           <div class="decision-opt decision-opt-yes">
-            
+
             <div>
               <strong>3가지 연결 패턴</strong><br>
               <span style="color:#374151">
@@ -1590,10 +1893,35 @@ p{line-height:1.75;color:#334155;margin-bottom:8px;font-size:13px}
             </div>
           </div>
           <div class="decision-opt decision-opt-no">
-            
+
             <div>
               <strong>측정대상디바이스는 항상 1:1</strong><br>
               <span style="color:#374151">측정대상 하나에 디바이스는 반드시 1개만 연결. 디바이스 교체 시 기존 연결 해제 후 신규 디바이스 재연결.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="decision-card" style="grid-column:span 2">
+      <div class="decision-head" style="background:#FFEDD5;color:#C2410C">
+         화물(CargoItem) 사용 기준
+      </div>
+      <div class="decision-body">
+        <div class="decision-q">동일 측정대상(컨테이너·팔레트)에 여러 화주의 화물이 혼재하나요?</div>
+        <div class="decision-opts" style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <div class="decision-opt decision-opt-yes">
+
+            <div>
+              <strong>CargoItem 필수 (LCL / 혼재)</strong><br>
+              <span style="color:#374151">다수 화주의 화물이 하나의 컨테이너·팔레트에 혼재 → 화물(CargoItem)마다 <code style="font-size:11px">shipper_code</code> 부여 → 화주별 데이터 격리. 세그먼트와 함께 Chain B 구조 사용.</span>
+            </div>
+          </div>
+          <div class="decision-opt" style="background:#F0FDF4;border:1px solid #A7F3D0">
+
+            <div>
+              <strong>CargoItem 선택 사용 (FCL / 단일 화주)</strong><br>
+              <span style="color:#374151">단일 화주가 컨테이너 전체 사용 → shipper_code는 CargoItem 레벨에서 관리 (FCL/LCL 동일). 화주사 연결 필요 시 CargoItem 등록 필요. 화주 연결 없는 내부 운송만 CargoItem 생략 가능. Chain A 구조.</span>
             </div>
           </div>
         </div>
@@ -1607,7 +1935,7 @@ p{line-height:1.75;color:#334155;margin-bottom:8px;font-size:13px}
      §7. 실고객사 시나리오 — 바이오 콜드체인
 ══════════════════════════════════ -->
 <section id="sc-pharma">
-  <h2>5. 시나리오 (참고용)</h2>
+  <h2>6. 시나리오 (참고용)</h2>
   <hr class="sc-divider">
 
   <!-- ── 시나리오 1: 바이오 콜드체인 ── -->
@@ -1624,6 +1952,7 @@ p{line-height:1.75;color:#334155;margin-bottom:8px;font-size:13px}
           <span class="sc-tag">비실시간 기기</span>
           <span class="sc-tag">비실시간 기기 (GW)</span>
           <span class="sc-tag">세그먼트 활용</span>
+          <span class="sc-tag" style="background:rgba(30,64,175,0.25);border-color:rgba(147,197,253,0.5)">Chain B (세그먼트→CargoItem)</span>
         </div>
       </div>
     </div>
@@ -1843,6 +2172,7 @@ p{line-height:1.75;color:#334155;margin-bottom:8px;font-size:13px}
           <span class="sc-tag">4종 측정</span>
           <span class="sc-tag">실시간 기기</span>
           <span class="sc-tag">멀티 세그먼트</span>
+          <span class="sc-tag" style="background:rgba(5,150,105,0.2);border-color:rgba(110,231,183,0.5)">Chain A (단일화주·CargoItem 선택)</span>
         </div>
       </div>
     </div>
@@ -2251,6 +2581,7 @@ p{line-height:1.75;color:#334155;margin-bottom:8px;font-size:13px}
           <span class="sc-tag">크로스 Tenant</span>
           <span class="sc-tag">화주사 읽기 전용</span>
           <span class="sc-tag">알림 프리셋</span>
+          <span class="sc-tag" style="background:rgba(30,64,175,0.25);border-color:rgba(147,197,253,0.5)">Chain B (혼재→CargoItem 필수)</span>
         </div>
       </div>
     </div>
@@ -2258,9 +2589,9 @@ p{line-height:1.75;color:#334155;margin-bottom:8px;font-size:13px}
       <div class="sc-sect-label">크로스 Tenant 연결 구조</div>
       <div class="tree-wrap" style="margin-bottom:12px">
         <div class="t1">운송사: 3PL 물류 A [운송사 타입]</div>
-        <div class="t2">├── 트래킹 [shipper_code: 화주사 B] → 화주사 B 읽기 전용</div>
-        <div class="t2">├── 트래킹 [shipper_code: 화주사 C] → 화주사 C 읽기 전용</div>
-        <div class="t2">└── 트래킹 [shipper_code 없음] → 3PL 자체 화물</div>
+        <div class="t2">├── 트래킹 → 측정대상 → 화물(CargoItem) [shipper_code: 화주사 B] → 화주사 B 읽기 전용</div>
+        <div class="t2">├── 트래킹 → 측정대상 → 화물(CargoItem) [shipper_code: 화주사 C] → 화주사 C 읽기 전용</div>
+        <div class="t2">└── 트래킹 → 측정대상 → (CargoItem 없음) → 3PL 자체 화물</div>
       </div>
       <div class="sc-config" style="grid-template-columns:1fr 1fr">
         <div class="sc-col">
@@ -2291,6 +2622,7 @@ p{line-height:1.75;color:#334155;margin-bottom:8px;font-size:13px}
           <span class="sc-tag">실시간 기기</span>
           <span class="sc-tag">shipper_code</span>
           <span class="sc-tag">알림 프리셋</span>
+          <span class="sc-tag" style="background:rgba(30,64,175,0.25);border-color:rgba(147,197,253,0.5)">Chain B (세그먼트→CargoItem 필수)</span>
         </div>
       </div>
     </div>
