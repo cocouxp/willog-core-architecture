@@ -470,9 +470,7 @@ p{line-height:1.75;color:#334155;margin-bottom:8px;font-size:13px}
         </div>
       </div>
       <div class="rel-card-body" style="font-size:12.5px;color:#334155;line-height:1.7">
-        온도·습도·충격·위치 등 센서 데이터를 수집하는 IoT 장비. 하나의 측정대상에 <strong>복수(1:N) 부착</strong> 가능.<br><br>
-        · <strong>실시간 직접 전송</strong> — 서버에 직접 데이터 전송. 즉각 알림 가능.<br>
-        · <strong>게이트웨이 중계 전송</strong> — 게이트웨이 장비를 통해 중계 전송. 블루투스 소형 센서 등.
+        온도·습도·충격·위치 등 센서 데이터를 수집하는 IoT 장비. 하나의 측정대상에 <strong>여러 개 동시 부착</strong> 가능하며, 목적이 다른 센서를 함께 운영합니다.
         <div style="margin-top:9px;padding:7px 10px;background:#F8FAFC;border-left:3px solid #94A3B8;border-radius:0 6px 6px 0;font-size:11.5px;color:#475569;line-height:1.65">예시: 냉장 트럭 1대에 온도 센서(전단·중단·후단) 3개 + GPS 실시간 기기 1개 = Device 4개. 각 센서 데이터가 독립적으로 수집.</div>
       </div>
     </div>
@@ -1076,88 +1074,46 @@ p{line-height:1.75;color:#334155;margin-bottom:8px;font-size:13px}
 ══════════════════════════════════ -->
 <section id="measurement-device">
   <h2>3. 측정대상 &amp; 디바이스</h2>
-  <p>디바이스는 <strong>측정대상(물리 자산)</strong>을 통해 트래킹에 연결됩니다. 하나의 트래킹에 측정대상을 1개 또는 여러 개 연결할 수 있고, 하나의 측정대상에 디바이스를 <strong>여러 개 동시에 부착</strong>할 수 있습니다.</p>
+  <p>측정대상은 센서(디바이스)가 붙는 <strong>물리 자산</strong>입니다. 트래킹 1건에 측정대상을 하나 또는 여러 개 연결할 수 있고, 하나의 측정대상에 목적이 다른 센서를 동시에 여러 개 부착할 수 있습니다. 알림 임계치(프리셋)는 측정대상 단위로 설정됩니다.</p>
 
-  <div class="entity-map" style="margin-bottom:20px">
-    <div style="font-size:11px;font-weight:700;color:#94A3B8;text-transform:uppercase;letter-spacing:.08em;margin-bottom:16px">연결 흐름</div>
-    <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
-      <div class="emap-node"><div class="emap-box" style="background:var(--blue-l);color:#1D4ED8;border:1.5px solid #93C5FD;padding:12px 18px">트래킹<br><span style="font-size:10px;font-weight:500">(운송형/공간형)</span></div></div>
-      <div style="display:flex;flex-direction:column;align-items:center;gap:2px;padding:0 6px">
-        <span style="font-size:9.5px;color:#94A3B8;font-weight:700">tracking_target</span>
-        <div style="height:2px;width:44px;background:#CBD5E1"></div>
-        <span style="font-size:9.5px;color:#94A3B8">1:1 / 1:N / N:1</span>
-      </div>
-      <div class="emap-node"><div class="emap-box" style="background:var(--amber-l);color:#92400E;border:1.5px solid #FCD34D;padding:12px 18px">측정대상<br><span style="font-size:10px;font-weight:500">(물리 자산)</span></div></div>
-      <div style="display:flex;flex-direction:column;align-items:center;gap:2px;padding:0 6px">
-        <span style="font-size:9.5px;color:#94A3B8;font-weight:700">1 : N</span>
-        <div style="height:2px;width:44px;background:#CBD5E1"></div>
-      </div>
-      <div class="emap-node"><div class="emap-box" style="background:var(--violet-l);color:#5B21B6;border:1.5px solid #C4B5FD;padding:12px 18px">디바이스<br><span style="font-size:10px;font-weight:500">(센서 장비)</span></div></div>
-      <div style="display:flex;flex-direction:column;align-items:center;gap:2px;padding:0 6px">
-        <span style="font-size:9.5px;color:#DC2626;font-weight:700">N:M</span>
-        <div style="height:2px;width:44px;background:#FCA5A5"></div>
-        <span style="font-size:9.5px;color:#DC2626">alert_preset_target</span>
-      </div>
-      <div class="emap-node"><div class="emap-box" style="background:var(--red-l);color:#991B1B;border:1.5px solid #FCA5A5;padding:12px 18px">AlertPreset<br><span style="font-size:10px;font-weight:500">(임계치 조건)</span></div></div>
-    </div>
+  <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;background:#F8FAFC;border-radius:10px;padding:14px 18px;margin-bottom:20px">
+    <div style="background:#DBEAFE;color:#1D4ED8;font-size:12px;font-weight:700;padding:8px 16px;border-radius:8px;border:1.5px solid #93C5FD">트래킹<br><span style="font-size:10px;font-weight:500;opacity:.8">운송형 / 공간형</span></div>
+    <div style="color:#94A3B8;font-size:18px;font-weight:300">→</div>
+    <div style="background:#FEF3C7;color:#92400E;font-size:12px;font-weight:700;padding:8px 16px;border-radius:8px;border:1.5px solid #FCD34D">측정대상<br><span style="font-size:10px;font-weight:500;opacity:.8">물리 자산 (17종)</span></div>
+    <div style="color:#94A3B8;font-size:18px;font-weight:300">→</div>
+    <div style="background:#EDE9FE;color:#5B21B6;font-size:12px;font-weight:700;padding:8px 16px;border-radius:8px;border:1.5px solid #C4B5FD">디바이스<br><span style="font-size:10px;font-weight:500;opacity:.8">센서 장비</span></div>
+    <div style="color:#94A3B8;font-size:18px;font-weight:300">+</div>
+    <div style="background:#FEE2E2;color:#991B1B;font-size:12px;font-weight:700;padding:8px 16px;border-radius:8px;border:1.5px solid #FCA5A5">알림 프리셋<br><span style="font-size:10px;font-weight:500;opacity:.8">임계치 조건</span></div>
   </div>
 
-  <h3>측정대상 타입 (17종 확정)</h3>
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px">
+  <h3>측정대상 종류 (17종)</h3>
+  <p style="font-size:13px;color:#475569;margin:-4px 0 14px">운송형 트래킹에는 이동형 자산이, 공간형 트래킹에는 고정형 자산이 연결됩니다.</p>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px">
     <div style="background:#EFF6FF;border:1.5px solid #BFDBFE;border-radius:10px;padding:14px 16px">
-      <div style="font-size:11px;font-weight:800;color:#1D4ED8;text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px">이동형 (TRANSPORT) — 9종</div>
+      <div style="font-size:12px;font-weight:800;color:#1D4ED8;margin-bottom:12px">이동형 — 9종</div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
-        <div style="background:#fff;border:1px solid #DBEAFE;border-radius:6px;padding:7px 10px"><div style="font-size:10px;font-weight:700;color:#2563EB;font-family:monospace">VEHICLE</div><div style="font-size:12px;color:#334155;font-weight:600">차량</div><div style="font-size:10.5px;color:#64748B">트럭, 밴, 승합차</div></div>
-        <div style="background:#fff;border:1px solid #DBEAFE;border-radius:6px;padding:7px 10px"><div style="font-size:10px;font-weight:700;color:#2563EB;font-family:monospace">TRAILER</div><div style="font-size:12px;color:#334155;font-weight:600">트레일러</div><div style="font-size:10.5px;color:#64748B">트레일러 적재함</div></div>
-        <div style="background:#fff;border:1px solid #DBEAFE;border-radius:6px;padding:7px 10px"><div style="font-size:10px;font-weight:700;color:#2563EB;font-family:monospace">CONTAINER</div><div style="font-size:12px;color:#334155;font-weight:600">컨테이너</div><div style="font-size:10.5px;color:#64748B">해상/육상 컨테이너</div></div>
-        <div style="background:#fff;border:1px solid #DBEAFE;border-radius:6px;padding:7px 10px"><div style="font-size:10px;font-weight:700;color:#2563EB;font-family:monospace">PALLET</div><div style="font-size:12px;color:#334155;font-weight:600">팔레트</div><div style="font-size:10.5px;color:#64748B">물류 팔레트</div></div>
-        <div style="background:#fff;border:1px solid #DBEAFE;border-radius:6px;padding:7px 10px"><div style="font-size:10px;font-weight:700;color:#2563EB;font-family:monospace">BOX</div><div style="font-size:12px;color:#334155;font-weight:600">박스</div><div style="font-size:10.5px;color:#64748B">운송 박스·케이스</div></div>
-        <div style="background:#fff;border:1px solid #DBEAFE;border-radius:6px;padding:7px 10px"><div style="font-size:10px;font-weight:700;color:#2563EB;font-family:monospace">COOL_BAG</div><div style="font-size:12px;color:#334155;font-weight:600">쿨백</div><div style="font-size:10.5px;color:#64748B">보냉 백·아이스박스</div></div>
-        <div style="background:#fff;border:1px solid #DBEAFE;border-radius:6px;padding:7px 10px"><div style="font-size:10px;font-weight:700;color:#2563EB;font-family:monospace">VESSEL</div><div style="font-size:12px;color:#334155;font-weight:600">선박</div><div style="font-size:10.5px;color:#64748B">해상 운송 선박</div></div>
-        <div style="background:#fff;border:1px solid #DBEAFE;border-radius:6px;padding:7px 10px"><div style="font-size:10px;font-weight:700;color:#2563EB;font-family:monospace">AIRCRAFT</div><div style="font-size:12px;color:#334155;font-weight:600">항공기</div><div style="font-size:10.5px;color:#64748B">항공 화물기</div></div>
-        <div style="background:#fff;border:1px solid #DBEAFE;border-radius:6px;padding:7px 10px"><div style="font-size:10px;font-weight:700;color:#2563EB;font-family:monospace">RAIL_CAR</div><div style="font-size:12px;color:#334155;font-weight:600">철도 화차</div><div style="font-size:10.5px;color:#64748B">철도 화물 운송 차량</div></div>
+        <div style="background:#fff;border:1px solid #DBEAFE;border-radius:6px;padding:8px 10px"><div style="font-size:12px;color:#334155;font-weight:700">차량</div><div style="font-size:10.5px;color:#64748B">트럭, 밴, 승합차</div></div>
+        <div style="background:#fff;border:1px solid #DBEAFE;border-radius:6px;padding:8px 10px"><div style="font-size:12px;color:#334155;font-weight:700">트레일러</div><div style="font-size:10.5px;color:#64748B">트레일러 적재함</div></div>
+        <div style="background:#fff;border:1px solid #DBEAFE;border-radius:6px;padding:8px 10px"><div style="font-size:12px;color:#334155;font-weight:700">컨테이너</div><div style="font-size:10.5px;color:#64748B">해상/육상 컨테이너</div></div>
+        <div style="background:#fff;border:1px solid #DBEAFE;border-radius:6px;padding:8px 10px"><div style="font-size:12px;color:#334155;font-weight:700">팔레트</div><div style="font-size:10.5px;color:#64748B">물류 팔레트</div></div>
+        <div style="background:#fff;border:1px solid #DBEAFE;border-radius:6px;padding:8px 10px"><div style="font-size:12px;color:#334155;font-weight:700">박스</div><div style="font-size:10.5px;color:#64748B">운송 박스·케이스</div></div>
+        <div style="background:#fff;border:1px solid #DBEAFE;border-radius:6px;padding:8px 10px"><div style="font-size:12px;color:#334155;font-weight:700">쿨백</div><div style="font-size:10.5px;color:#64748B">보냉 백·아이스박스</div></div>
+        <div style="background:#fff;border:1px solid #DBEAFE;border-radius:6px;padding:8px 10px"><div style="font-size:12px;color:#334155;font-weight:700">선박</div><div style="font-size:10.5px;color:#64748B">해상 운송 선박</div></div>
+        <div style="background:#fff;border:1px solid #DBEAFE;border-radius:6px;padding:8px 10px"><div style="font-size:12px;color:#334155;font-weight:700">항공기</div><div style="font-size:10.5px;color:#64748B">항공 화물기</div></div>
+        <div style="background:#fff;border:1px solid #DBEAFE;border-radius:6px;padding:8px 10px"><div style="font-size:12px;color:#334155;font-weight:700">철도 화차</div><div style="font-size:10.5px;color:#64748B">철도 화물 운송 차량</div></div>
       </div>
     </div>
     <div style="background:#F0FDF4;border:1.5px solid #A7F3D0;border-radius:10px;padding:14px 16px">
-      <div style="font-size:11px;font-weight:800;color:#065F46;text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px">고정형 (SPACE) — 8종</div>
+      <div style="font-size:12px;font-weight:800;color:#065F46;margin-bottom:12px">고정형 — 8종</div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
-        <div style="background:#fff;border:1px solid #D1FAE5;border-radius:6px;padding:7px 10px"><div style="font-size:10px;font-weight:700;color:#059669;font-family:monospace">ZONE</div><div style="font-size:12px;color:#064E3B;font-weight:600">구역</div><div style="font-size:10.5px;color:#64748B">창고 내 구역</div></div>
-        <div style="background:#fff;border:1px solid #D1FAE5;border-radius:6px;padding:7px 10px"><div style="font-size:10px;font-weight:700;color:#059669;font-family:monospace">SPOT</div><div style="font-size:12px;color:#064E3B;font-weight:600">특정 위치</div><div style="font-size:10.5px;color:#64748B">포인트 모니터링</div></div>
-        <div style="background:#fff;border:1px solid #D1FAE5;border-radius:6px;padding:7px 10px"><div style="font-size:10px;font-weight:700;color:#059669;font-family:monospace">CHAMBER</div><div style="font-size:12px;color:#064E3B;font-weight:600">챔버</div><div style="font-size:10.5px;color:#64748B">항온 챔버</div></div>
-        <div style="background:#fff;border:1px solid #D1FAE5;border-radius:6px;padding:7px 10px"><div style="font-size:10px;font-weight:700;color:#059669;font-family:monospace">FREEZER</div><div style="font-size:12px;color:#064E3B;font-weight:600">냉동고</div><div style="font-size:10.5px;color:#64748B">냉동 보관 유닛</div></div>
-        <div style="background:#fff;border:1px solid #D1FAE5;border-radius:6px;padding:7px 10px"><div style="font-size:10px;font-weight:700;color:#059669;font-family:monospace">REFRIGERATOR</div><div style="font-size:12px;color:#064E3B;font-weight:600">냉장고</div><div style="font-size:10.5px;color:#64748B">냉장 보관 유닛</div></div>
-        <div style="background:#fff;border:1px solid #D1FAE5;border-radius:6px;padding:7px 10px"><div style="font-size:10px;font-weight:700;color:#059669;font-family:monospace">RACK</div><div style="font-size:12px;color:#064E3B;font-weight:600">랙</div><div style="font-size:10.5px;color:#64748B">창고 선반 유닛</div></div>
-        <div style="background:#fff;border:1px solid #D1FAE5;border-radius:6px;padding:7px 10px"><div style="font-size:10px;font-weight:700;color:#059669;font-family:monospace">TANK</div><div style="font-size:12px;color:#064E3B;font-weight:600">탱크</div><div style="font-size:10.5px;color:#64748B">액체·가스 저장</div></div>
-        <div style="background:#fff;border:1px solid #D1FAE5;border-radius:6px;padding:7px 10px"><div style="font-size:10px;font-weight:700;color:#059669;font-family:monospace">ROOM</div><div style="font-size:12px;color:#064E3B;font-weight:600">룸</div><div style="font-size:10.5px;color:#64748B">보관 방, 격리 공간</div></div>
-      </div>
-    </div>
-  </div>
-
-  <h3>디바이스 타입 및 모드</h3>
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
-    <div style="background:#F5F3FF;border:1.5px solid #C4B5FD;border-radius:10px;padding:14px 16px">
-      <div style="font-size:11px;font-weight:800;color:#5B21B6;margin-bottom:12px">device_type (7종)</div>
-      <div style="display:flex;flex-direction:column;gap:6px;font-size:12px">
-        <div style="display:flex;gap:10px"><span style="font-weight:700;color:#6D28D9;min-width:100px">온도 센서</span><span style="color:#334155">냉장·냉동 온도 범위 모니터링</span></div>
-        <div style="display:flex;gap:10px"><span style="font-weight:700;color:#6D28D9;min-width:100px">습도 센서</span><span style="color:#334155">보관 환경 습도 측정</span></div>
-        <div style="display:flex;gap:10px"><span style="font-weight:700;color:#6D28D9;min-width:100px">충격 센서</span><span style="color:#334155">가속도 기반 충격 감지</span></div>
-        <div style="display:flex;gap:10px"><span style="font-weight:700;color:#6D28D9;min-width:100px">문열림 센서</span><span style="color:#334155">컨테이너·챔버 문 개방 감지</span></div>
-        <div style="display:flex;gap:10px"><span style="font-weight:700;color:#6D28D9;min-width:100px">위치 추적(GPS)</span><span style="color:#334155">실시간 위치 추적</span></div>
-        <div style="display:flex;gap:10px"><span style="font-weight:700;color:#6D28D9;min-width:100px">CO₂ 센서</span><span style="color:#334155">이산화탄소 농도 측정</span></div>
-        <div style="display:flex;gap:10px"><span style="font-weight:700;color:#6D28D9;min-width:100px">압력 센서</span><span style="color:#334155">압력 측정</span></div>
-      </div>
-    </div>
-    <div style="background:#EFF6FF;border:1.5px solid #BFDBFE;border-radius:10px;padding:14px 16px">
-      <div style="font-size:11px;font-weight:800;color:#1D4ED8;margin-bottom:12px">디바이스 통신 방식 (2종)</div>
-      <div style="display:flex;flex-direction:column;gap:12px;font-size:12px">
-        <div style="background:#fff;border:1px solid #DBEAFE;border-radius:8px;padding:10px 12px">
-          <div style="font-weight:700;color:#1D4ED8;margin-bottom:4px">실시간 직접 전송</div>
-          <div style="color:#334155;line-height:1.6">서버에 직접 데이터 전송. GPS 추적·즉각 알림 가능. 셀룰러(LTE/5G) 통신.</div>
-        </div>
-        <div style="background:#fff;border:1px solid #DBEAFE;border-radius:8px;padding:10px 12px">
-          <div style="font-weight:700;color:#1D4ED8;margin-bottom:4px">게이트웨이 중계 전송</div>
-          <div style="color:#334155;line-height:1.6">게이트웨이 장비를 통해 중계 전송. 블루투스 소형 센서 등. 배터리 효율 우수.</div>
-        </div>
+        <div style="background:#fff;border:1px solid #D1FAE5;border-radius:6px;padding:8px 10px"><div style="font-size:12px;color:#064E3B;font-weight:700">구역</div><div style="font-size:10.5px;color:#64748B">창고 내 구역</div></div>
+        <div style="background:#fff;border:1px solid #D1FAE5;border-radius:6px;padding:8px 10px"><div style="font-size:12px;color:#064E3B;font-weight:700">특정 위치</div><div style="font-size:10.5px;color:#64748B">포인트 모니터링</div></div>
+        <div style="background:#fff;border:1px solid #D1FAE5;border-radius:6px;padding:8px 10px"><div style="font-size:12px;color:#064E3B;font-weight:700">챔버</div><div style="font-size:10.5px;color:#64748B">항온 챔버</div></div>
+        <div style="background:#fff;border:1px solid #D1FAE5;border-radius:6px;padding:8px 10px"><div style="font-size:12px;color:#064E3B;font-weight:700">냉동고</div><div style="font-size:10.5px;color:#64748B">냉동 보관 유닛</div></div>
+        <div style="background:#fff;border:1px solid #D1FAE5;border-radius:6px;padding:8px 10px"><div style="font-size:12px;color:#064E3B;font-weight:700">냉장고</div><div style="font-size:10.5px;color:#64748B">냉장 보관 유닛</div></div>
+        <div style="background:#fff;border:1px solid #D1FAE5;border-radius:6px;padding:8px 10px"><div style="font-size:12px;color:#064E3B;font-weight:700">랙</div><div style="font-size:10.5px;color:#64748B">창고 선반 유닛</div></div>
+        <div style="background:#fff;border:1px solid #D1FAE5;border-radius:6px;padding:8px 10px"><div style="font-size:12px;color:#064E3B;font-weight:700">탱크</div><div style="font-size:10.5px;color:#64748B">액체·가스 저장</div></div>
+        <div style="background:#fff;border:1px solid #D1FAE5;border-radius:6px;padding:8px 10px"><div style="font-size:12px;color:#064E3B;font-weight:700">룸</div><div style="font-size:10.5px;color:#64748B">보관 방, 격리 공간</div></div>
       </div>
     </div>
   </div>
