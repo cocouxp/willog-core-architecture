@@ -442,7 +442,7 @@ p{line-height:1.75;color:#334155;margin-bottom:8px;font-size:13px}
       <div class="rel-card-body" style="font-size:12.5px;color:#334155;line-height:1.7">
         하나의 트래킹 내 구간을 분리하는 <strong>선택적 단위</strong>. 구간별로 독립적인 온도 기준·알림 프리셋·측정대상을 적용해야 할 때 사용.<br><br>
         <strong>TRANSPORT type에서만 사용</strong>. SPACE type에는 세그먼트 없음.
-        <div style="margin-top:9px;padding:7px 10px;background:#F8FAFC;border-left:3px solid #94A3B8;border-radius:0 6px 6px 0;font-size:11.5px;color:#475569;line-height:1.65">예시: 서울(출발) → 인천항(경유) → 상하이(도착). 세그먼트 1: 서울~인천항 냉장(-18°C), 세그먼트 2: 인천항~상하이 선내 냉동(-20°C). 각 구간에 다른 측정대상과 알림 프리셋 적용.</div>
+        <div style="margin-top:9px;padding:7px 10px;background:#F8FAFC;border-left:3px solid #94A3B8;border-radius:0 6px 6px 0;font-size:11.5px;color:#475569;line-height:1.65">예시: 인천 출발 → 대전 경유 → 부산 도착. 세그먼트 1: 인천~대전 (2~8°C / 기사 A 담당), 세그먼트 2: 대전~부산 야간 구간 (알림 조건 강화 / 기사 B 담당). 경유지 도착 시점마다 독립 기록 및 알림 발송.<br><br><strong>구분 기준:</strong> 동일 트래킹(차량·디바이스 연속)에서 경유지마다 담당자·온도 기준이 달라질 때 세그먼트 사용. 담당사 또는 디바이스가 바뀌는 경우에는 트래킹을 분리하고 그룹으로 묶음.</div>
       </div>
     </div>
 
@@ -1341,10 +1341,10 @@ p{line-height:1.75;color:#334155;margin-bottom:8px;font-size:13px}
     <div class="decision-card">
       <div class="decision-head" style="background:#CFFAFE;color:#0E7490">세그먼트(Segment) 사용 기준</div>
       <div class="decision-body">
-        <div class="decision-q">경유지별로 다른 온도 조건이나 측정대상이 필요한가요?</div>
+        <div class="decision-q">동일 차량·디바이스가 경유지를 거치며, 구간마다 담당자나 온도 기준이 달라지나요?</div>
         <div class="decision-opts">
-          <div class="decision-opt decision-opt-yes"><div><strong>세그먼트 사용 권장</strong><br><span style="color:#374151">서울→대전 구간 2~8°C / 대전→부산 구간 -20°C처럼 구간별 조건이 다를 때. 경유지별 독립 알림 프리셋.</span></div></div>
-          <div class="decision-opt decision-opt-no"><div><strong>세그먼트 불필요한 경우</strong><br><span style="color:#374151">단일 온도 조건으로 전 구간 동일 관리. SPACE 트래킹은 항상 세그먼트 미사용.</span></div></div>
+          <div class="decision-opt decision-opt-yes"><div><strong>세그먼트 사용 권장</strong><br><span style="color:#374151">예) 인천 출발 → 대전 경유 → 부산 도착. 구간별 담당 기사 분리, 경유지 도착 시점 독립 기록, 야간 구간 알림 조건 강화 등.</span></div></div>
+          <div class="decision-opt decision-opt-no"><div><strong>세그먼트 불필요 / 트래킹 분리 필요</strong><br><span style="color:#374151">전 구간 조건 동일 → 세그먼트 없이 단일 트래킹. 담당사·디바이스가 바뀌는 경우 → 트래킹을 분리하고 그룹으로 묶음. SPACE 트래킹은 항상 세그먼트 미사용.</span></div></div>
         </div>
       </div>
     </div>
@@ -1436,19 +1436,22 @@ p{line-height:1.75;color:#334155;margin-bottom:8px;font-size:13px}
     <div class="sc-head" style="background:linear-gradient(135deg,#1D4ED8 0%,#1e3a8a 100%)">
       <div class="sc-head-info">
         <div class="sc-head-title">SC3 — 국제운송 · 특수소재 제조사 A 아태지역 선적</div>
-        <div class="sc-head-sub">인천 → 상하이 → 싱가포르 → LA. 4종 측정(온도·습도·조도·충격). FCL 컨테이너.</div>
-        <div class="sc-tags"><span class="sc-tag">국제운송</span><span class="sc-tag">FCL</span><span class="sc-tag">멀티 세그먼트</span><span class="sc-tag">Chain A</span></div>
+        <div class="sc-head-sub">인천 → 상하이 환적 → 싱가포르 → LA. 구간마다 담당 포워더 교체. 그룹으로 전체 여정 통합 조회.</div>
+        <div class="sc-tags"><span class="sc-tag">국제운송</span><span class="sc-tag">FCL</span><span class="sc-tag">환적</span><span class="sc-tag">그룹 + 복수 트래킹</span><span class="sc-tag">Chain A</span></div>
       </div>
     </div>
     <div class="sc-body">
       <div class="sc-sect-label">트래킹 계층 구조</div>
       <div class="sc-tree">
-        <div class="t0">[그룹] A사 2026-Q2 아태지역 선적</div>
-        <div class="t1">└── [트래킹] FCL 운송 #CN-20260501 (TRANSPORT)</div>
-        <div class="t2">├── 측정대상: 컨테이너 CNXU-7891234 [REALTIME]</div>
-        <div class="t3">├── 온도(-5~25°C), 습도(40~60% RH), 조도, 충격</div>
-        <div class="t2">└── 세그먼트: Seg1 인천항→상하이 / Seg2 상하이→싱가포르 / Seg3 싱가포르→LA</div>
+        <div class="t0">[그룹] A사 2026-Q2 아태지역 선적 (B/L #CN-20260501)</div>
+        <div class="t1">├── [트래킹 1] 인천항 → 상하이 (TRANSPORT) — 한국 포워더 담당</div>
+        <div class="t2">│    └── 측정대상: 컨테이너 CNXU-7891234 [디바이스 A / 온도·충격]</div>
+        <div class="t1">├── [트래킹 2] 상하이 환적 창고 (TRANSPORT) — 상하이 에이전트 담당</div>
+        <div class="t2">│    └── 측정대상: CNXU-7891234 [디바이스 B 교체 / 온도·습도]</div>
+        <div class="t1">└── [트래킹 3] 상하이 → 싱가포르 → LA (TRANSPORT) — 글로벌 포워더 담당</div>
+        <div class="t2">     └── 측정대상: CNXU-7891234 [디바이스 C 교체 / 온도·습도·조도·충격]</div>
       </div>
+      <div class="callout callout-blue" style="margin-top:12px"><strong>그룹 사용 이유:</strong> 컨테이너 1개의 여정이지만 구간마다 담당 포워더와 디바이스가 교체되어 트래킹을 분리. B/L 단위로 전체 여정을 통합 조회하기 위해 그룹으로 묶음. 화주(제조사 A)는 그룹 단위 조회 전용.</div>
     </div>
   </div>
 
@@ -1560,15 +1563,12 @@ p{line-height:1.75;color:#334155;margin-bottom:8px;font-size:13px}
     <div class="sc-body">
       <div class="sc-sect-label">트래킹 계층 구조</div>
       <div class="sc-tree">
-        <div class="t0">[트래킹] LCL 운송 #LCL-2026-0501 (TRANSPORT)</div>
-        <div class="t1">├── 세그먼트 1: 인천항 → 상하이</div>
-        <div class="t2">│    └── 측정대상: 컨테이너 CNXU-001</div>
-        <div class="t3">│         ├── CargoItem①: company_code=JONGGEUNDANG [종근당 의약품]</div>
-        <div class="t3">│         └── CargoItem②: company_code=ALCON-KR [알콘 안과용액]</div>
-        <div class="t1">└── 세그먼트 2: 상하이 → 싱가포르</div>
-        <div class="t2">     └── 측정대상: 컨테이너 CNXU-001 (동일)</div>
+        <div class="t0">[트래킹] LCL 운송 #LCL-2026-0501 (TRANSPORT) — 운송사 직접 등록</div>
+        <div class="t1">└── 측정대상: 컨테이너 CNXU-001 [동일 차량·디바이스로 전 구간 이동]</div>
+        <div class="t2">     ├── CargoItem①: company_code=JONGGEUNDANG [종근당 의약품]</div>
+        <div class="t2">     └── CargoItem②: company_code=ALCON-KR [알콘 안과용액]</div>
       </div>
-      <div class="callout callout-amber" style="margin-top:12px"><strong>핵심:</strong> 컨테이너 1개에 화주 2명의 화물이 혼재. 동일 온도 이탈 이벤트 발생 시 종근당 AlertRecipient와 알콘 AlertRecipient에 <strong>각각 독립적으로</strong> 알림 발송. 상대방 수신자를 알 필요 없음.</div>
+      <div class="callout callout-amber" style="margin-top:12px"><strong>핵심:</strong> 컨테이너 1개에 화주 2명의 화물 혼재. 동일 온도 이탈 이벤트 발생 시 종근당 AlertRecipient와 알콘 AlertRecipient에 <strong>각각 독립적으로</strong> 알림 발송 — 상대방 수신자를 알 필요 없음. 경유지 없이 단일 운송이므로 세그먼트 미사용.</div>
     </div>
   </div>
 
